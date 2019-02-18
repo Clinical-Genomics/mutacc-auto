@@ -73,6 +73,24 @@ def find_cases_since(days=1):
 
     return recent_cases
 
+def find_cases(case_id):
+
+    case = subprocess.check_output(
+        [
+            'scout',
+            'export',
+            'cases',
+            '--json',
+            '--case-id',
+            case_id
+        ]
+    )
+
+    case = json.loads(case.decode("utf-8"))
+
+
+    return case
+
 if __name__ == '__main__':
 
     print(find_cases_since(days=150))

@@ -18,9 +18,9 @@ def find_bams(case):
     """
 
     #GET FILES FOR CASE FROM HOUSEKEEPER
-    hk_out = subprocess.check_output(['cat', 'HK_output_test.txt'])
-    #hk_out = subprocess.check_output(['cat', 'HK_output_test_wrong_bam.txt'])
-    #hk_out = subprocess.check_output(['cat', 'HK_output_test_no_bam.txt'])
+    hk_out = subprocess.check_output(['cat', 'mutacc_auto/tests/fixtures/HK_output_test.txt'])
+    #hk_out = subprocess.check_output(['cat', 'mutacc_auto/tests/fixtures/HK_output_test_wrong_bam.txt'])
+    #hk_out = subprocess.check_output(['cat', 'mutacc_auto/tests/fixtures/HK_output_test_no_bam.txt'])
     #hk_out = subprocess.check_output(['housekeeper','get', '-V', case])
 
     hk_out = hk_out.decode("utf-8")

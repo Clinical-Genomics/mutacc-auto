@@ -3,10 +3,11 @@
 import yaml
 import sys
 from pathlib import Path
-
-import scout_call
-import hk_call
 import logging
+
+
+from mutacc_auto.subprocessing import scout_call
+from mutacc_auto.subprocessing import hk_call
 
 LOG = logging.getLogger(__name__)
 
@@ -55,7 +56,7 @@ def assemble_case(case, directory):
         case_file_name = case_handle.name
 
 
-    print(case_file_name)
+    return case_file_name
 
 
 def assemble_samples(individuals, bam_files = None):
