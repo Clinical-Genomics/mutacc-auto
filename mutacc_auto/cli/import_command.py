@@ -17,11 +17,10 @@ LOG = logging.getLogger(__name__)
 @click.option('--environment', type=str)
 @click.option('--conf-file', type=click.Path(exists=True))
 @click.option('--padding', type=int)
+@click.option('--sbatch-templ', type=click.Path(exists=True))
 @click.pass_context
-def import_command(ctx, case_id, days_ago, environment, conf_file, padding):
-    """
-
-    """
+def import_command(ctx, case_id, days_ago, environment, conf_file, padding, sbatch_templ):
+    
     #directory = path_parse.make_dir(temp_dir)
     tmp_dir = tempfile.mkdtemp(prefix='mutacc_auto_')
     tmp_dir = Path(tmp_dir)
@@ -60,7 +59,8 @@ def import_command(ctx, case_id, days_ago, environment, conf_file, padding):
             case_input[1],
             environment,
             tmp_dir,
-            mutacc_conf=str(conf_file)
+            mutacc_conf=conf_file,
+            sbatch_template=sbatch_templ
         )
 
     rmtree(tmp_dir)

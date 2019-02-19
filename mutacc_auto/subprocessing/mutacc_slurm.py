@@ -1,72 +1,52 @@
 import subprocess
 import tempfile
 import logging
+import datetime
+import re
 
 from mutacc_auto.utils import path_parse
+from mutacc_auto.utils import sbatch_script
 
 
 LOG = logging.getLogger(__name__)
 
-#MAKE SBATCH OPTIONS VARIABLE!!!
-SBATCH_OPTIONS = {
 
-    '--account': 'account',
-    '-n': '1',
-    '-t': '5:00:00',
-    '-J': 'JOB_NAME',
-    '--qos': 'low',
-    '-e': "STANDARD_ERROR",
-    '-o': "STANDARD_OUT",
-    '--mail-type': 'FAIL',
-    '--mail-type': 'END',
-    '--mail-user': 'USER_EMAIL'
 
-}
+def mutacc_slurm_extract(input_file, padding, environment, job_directory, mutacc_conf=None, sbatch_template=None):
 
-def mutacc_slurm_extract(input_file, padding, environment, job_directory, mutacc_conf=None):
+    """
+        Writes sbatch script and executes it
+
+        Args:
+            input_file(Path): path to input yaml file
+            padding(int): bp to pad genomic region
+            environment(str): Environmnet to use for mutacc
+            job_directory(Path): directory to store sbatch script
+            mutacc_conf(Path): configuration file for mutacc
+            sbatch_template(Path): sbatch template
+    """
 
     job_directory = path_parse.make_dir(job_directory)
 
-    with tempfile.NamedTemporaryFile(mode = 'w',
-                                     suffix = '.sh',
-                                     prefix = 'mutacc_extract',
-                                     dir = job_directory,
-                                     delete = False) as sbatch_script:
+    with sbatch_script.SbatchScript(
+                                    sbatch_template,
+                                    environment,
+                                    job_directory,
+                                    'mutacc_extract'
+                                    ) as script_handle:
 
-        sbatch_script.write("#!/bin/bash\n")
-
-        for key in SBATCH_OPTIONS.keys():
-
-            sbatch_script.write("#SBATCH {}={}\n".format(key, SBATCH_OPTIONS[key]))
-
-        sbatch_script.write("source activate {}\n".format(environment))
-
-        mutacc_command = ['mutacc']
-
-        if mutacc_conf:
-
-            mutacc_command.append('--config-file')
-            mutacc_command.append('mutacc_conf')
-
-        mutacc_command.extend(
-            [
-                'extract',
-                '--padding', str(padding),
-                '--case', input_file,
-            ]
+        script_handle.write_command("mutacc --config-file {} extract --padding {} --case {}".format(
+                                        mutacc_conf,
+                                        padding,
+                                        input_file
+            )
         )
 
-
-        sbatch_script.write(' '.join(mutacc_command))
-        sbatch_script.write("\n")
+        file_path = script_handle.path
 
 
-    print(subprocess.check_output(['cat', sbatch_script.name]).decode("utf-8"))
+
+    print(subprocess.check_output(['cat', file_path]).decode("utf-8"))
 
     #ADD SBATCH COMMAND WITH subprocess
     #subprocess.call([sbatch, sbatch_script.name])
-
-
-if __name__ == '__main__':
-
-    mutacc_slurm_extract('INPUT.yaml', 300, 'ENVIRONMENT', '~/TEST_MUTACC_AUTO', mutacc_conf='CONFIG.yaml')
