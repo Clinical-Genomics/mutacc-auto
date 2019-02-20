@@ -1,5 +1,6 @@
 import subprocess
 import json
+import sys
 
 def find_bams(case):
 
@@ -17,6 +18,13 @@ def find_bams(case):
 
     """
 
+    #USE HK OUTPUT FROM FILE IF RUNNED AS TEST
+    if 'pytest' in sys.modules.keys():
+        hk_out = subprocess.check_output(['cat', 'mutacc_auto/tests/fixtures/HK_output_test.txt'])
+
+    else:
+        pass
+        #hk_out = subprocess.check_output(['housekeeper','get', '-V', case])
     #GET FILES FOR CASE FROM HOUSEKEEPER
     hk_out = subprocess.check_output(['cat', 'mutacc_auto/tests/fixtures/HK_output_test.txt'])
     #hk_out = subprocess.check_output(['cat', 'mutacc_auto/tests/fixtures/HK_output_test_wrong_bam.txt'])
@@ -47,4 +55,8 @@ def find_bams(case):
 
 if __name__ == "__main__":
 
-    hk_files = find_files("")
+    case_id = sys.argv[1]
+
+    hk_files = find_bams(case_id)
+
+    print(hk_files)

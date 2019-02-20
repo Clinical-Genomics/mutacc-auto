@@ -3,11 +3,15 @@ import logging
 from shutil import rmtree
 import tempfile
 from pathlib import Path
+import yaml
+import sys
+import os
 
 from mutacc_auto.build_input import input_assemble
 from mutacc_auto.subprocessing import scout_call
 from mutacc_auto.subprocessing.mutacc_slurm import mutacc_slurm_extract
 from mutacc_auto.utils import path_parse
+from mutacc_auto.subprocessing.mutacc_import import mutacc_import
 
 LOG = logging.getLogger(__name__)
 
@@ -20,7 +24,10 @@ LOG = logging.getLogger(__name__)
 @click.option('--sbatch-templ', type=click.Path(exists=True))
 @click.pass_context
 def import_command(ctx, case_id, days_ago, environment, conf_file, padding, sbatch_templ):
-    
+
+    mutacc_conf = yaml.load(conf_file)
+    case_dir = Path(mutacc_conf['case_dir'])
+
     #directory = path_parse.make_dir(temp_dir)
     tmp_dir = tempfile.mkdtemp(prefix='mutacc_auto_')
     tmp_dir = Path(tmp_dir)
@@ -64,3 +71,12 @@ def import_command(ctx, case_id, days_ago, environment, conf_file, padding, sbat
         )
 
     rmtree(tmp_dir)
+
+    for _, _, case_files in os.walk(case_dir):
+        for filename in case_files:
+            case_path = case_dir.joinpath(filename)
+            LOG.info("importing {}".format(filename))
+
+            ### IMPORT CASE AND DELETE FILE AFTERWARDS
+            #mutacc_import(case_path, conf_file)
+            #os.remove(filename)

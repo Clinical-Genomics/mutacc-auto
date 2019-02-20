@@ -19,7 +19,10 @@ URL = 'https://github.com/adrosenbaum/mutacc_automatic'
 EMAIL = 'adam.rosenbaum@scilifelab.se'
 AUTHOR = 'Adam Rosenbaum'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.1'
+VERSION = '1.0.0'
+
+SCOUT_VERSION = '4.2.2'
+HOUSEKEEPER_VERSION = '2.2.8'
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -50,15 +53,37 @@ REQUIRED = parse_reqs()
 
 def check_scout():
 
-    scout_output = subprocess.check_output(['scout', '--version'])
+    try:
+        scout_output = subprocess.check_output(['scout', '--version']).decode('utf-8')
 
-    if b'4.2.2' in scout_output:
+    except OSError as error:
+        sys.exit('scout does not exist')
+
+    scout_version = int(scout_output.split(' ')[-1].replace('.', ''))
+    min_scout_version = int(SCOUT_VERSION.replace('.',''))
+
+    if scout_version >= min_scout_version:
 
         return True
 
-#MAKE SIMILAR FUNCTIONS FOR HOUSEKEEPER AND MUTACC AS WELL
+def check_housekeeper():
 
-if not check_scout(): sys.exit('Dependency problem: scout >= 4.2.2 is required')
+    try:
+        hk_output = subprocess.check_output(['housekeeper', '--version']).decode('utf-8')
+
+    except OSError as error:
+        sys.exit('housekeeper does not exist')
+
+    hk_version = int(hk_output.split(' ')[-1].replace('.', ''))
+    min_hk_version = int(HOUSEKEEPER_VERSION.replace('.',''))
+
+    if hk_version >= min_hk_version:
+
+        return True
+
+
+if not check_scout(): sys.exit('Dependency problem: scout >= {} is required'.format(SCOUT_VERSION))
+if not check_housekeeper(): sys.exit('Dependency problem: housekeeper >= {} is required'.format(HOUSEKEEPER_VERSION))
 
 ###
 

@@ -1,6 +1,7 @@
 import subprocess
 import json
 from datetime import datetime, timedelta
+import sys
 
 
 
@@ -93,4 +94,8 @@ def find_cases(case_id):
 
 if __name__ == '__main__':
 
-    print(find_cases_since(days=150))
+
+    days = int(sys.argv[1])
+    print(find_cases_since(days=days))
+
+    case_id = str(sys.argv[2])
