@@ -51,6 +51,8 @@ def find_cases_since(days=1):
     days_datetime = datetime.now() - timedelta(days=days)
 
     #FIND SOLVED CASES FROM SCOUT
+    #THIS WILL STORE ALL THE FINISHED CASES IN THE DATABASE
+    #IN MEMORY!!! MAYBE NOT THE BEST IDEA...
     solved_cases = subprocess.check_output(
         [
             'scout',

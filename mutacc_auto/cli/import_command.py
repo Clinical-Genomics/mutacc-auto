@@ -25,7 +25,9 @@ LOG = logging.getLogger(__name__)
 @click.pass_context
 def import_command(ctx, case_id, days_ago, environment, conf_file, padding, sbatch_templ):
 
-    mutacc_conf = yaml.load(conf_file)
+    with open(Path(conf_file)) as yaml_handle:
+
+        mutacc_conf = yaml.load(yaml_handle)
     case_dir = Path(mutacc_conf['case_dir'])
 
     #directory = path_parse.make_dir(temp_dir)
@@ -78,5 +80,5 @@ def import_command(ctx, case_id, days_ago, environment, conf_file, padding, sbat
             LOG.info("importing {}".format(filename))
 
             ### IMPORT CASE AND DELETE FILE AFTERWARDS
-            #mutacc_import(case_path, conf_file)
-            #os.remove(filename)
+            mutacc_import(str(case_path), conf_file)
+            os.remove(case_path)

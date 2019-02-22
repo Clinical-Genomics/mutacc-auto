@@ -46,10 +46,19 @@ def mutacc_slurm_extract(input_file, padding, environment, job_directory, mutacc
 
 
 
-    print(subprocess.check_output(['cat', file_path]).decode("utf-8"))
+    LOG.info("sbatch script: \n{}".format(
+        subprocess.check_output(['cat', file_path]).decode("utf-8")
+            )
+        )
 
     #ADD SBATCH COMMAND WITH subprocess
     #USE --wait option so that script will continue only after
     #job is done
-    
-    #subprocess.call(['sbatch', '--wait', 'sbatch_script.name'])
+
+    try:
+
+        subprocess.check_call(['sbatch', '--wait', file_path])
+
+    except (OSError, subprocess.CalledProcessError):
+
+        LOG.critical("Could not run command batch script")
