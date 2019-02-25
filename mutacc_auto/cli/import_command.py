@@ -1,17 +1,14 @@
 import click
 import logging
 from shutil import rmtree
-import tempfile
 from pathlib import Path
 import yaml
 import sys
 import os
 
-from mutacc_auto.build_input import input_assemble
-from mutacc_auto.subprocessing import scout_call
-from mutacc_auto.subprocessing.mutacc_slurm import mutacc_slurm_extract
-from mutacc_auto.utils import path_parse
-from mutacc_auto.subprocessing.mutacc_import import mutacc_import
+from mutacc_auto.utils.tmp_dir import TemporaryDirectory
+from mutacc_auto.recipes.input_recipe import get_inputs
+from mutacc_auto.recipes.extract_recipe import run_mutacc_extract
 
 LOG = logging.getLogger(__name__)
 
@@ -21,58 +18,36 @@ LOG = logging.getLogger(__name__)
 @click.option('--environment', type=str)
 @click.option('--conf-file', type=click.Path(exists=True))
 @click.option('--padding', type=int)
-@click.option('--sbatch-templ', type=click.Path(exists=True))
+@click.option('--dry', is_flag=True)
 @click.pass_context
-def import_command(ctx, case_id, days_ago, environment, conf_file, padding, sbatch_templ):
+def import_command(ctx, case_id, days_ago, environment, conf_file, padding, dry):
 
     with open(Path(conf_file)) as yaml_handle:
 
         mutacc_conf = yaml.load(yaml_handle)
+
     case_dir = Path(mutacc_conf['case_dir'])
 
-    #directory = path_parse.make_dir(temp_dir)
-    tmp_dir = tempfile.mkdtemp(prefix='mutacc_auto_')
-    tmp_dir = Path(tmp_dir)
-    if case_id:
-        cases = scout_call.find_cases(case_id)
 
-    elif days_ago:
-        cases = scout_call.find_cases_since(days=int(days_ago))
+    with TemporaryDirectory(delete_dir=False) as tmp_dir:
 
-    else:
-        LOG.critical("Please specify with option --case-id or --days-ago")
+        inputs = get_inputs(tmp_dir, case_id=case_id, days_ago=days_ago)
 
-    inputs = []
-    for case in cases:
+        for case_input in inputs:
 
-        #Decide the padding
-        #If the case is from WES, no padding will be added, else 300 bp
-        if not padding:
+            run_mutacc_extract(
+                tmp_dir,
+                conf_file,
+                case_input['input_file'],
+                case_input['padding'],
+                environment,
+                stdout_file='STDOUT.txt',
+                stderr_file='STDERR.txt',
+                email='EMAIL@...',
+                wait=True,
+                dry=dry
+            )
 
-            case_padding = 300
-            for sample in case['individuals']:
-
-                if sample['analysis_type'].upper() == 'WES':
-
-                    case_padding = 0
-        else:
-
-            case_padding = padding
-
-        inputs.append((input_assemble.assemble_case(case, tmp_dir), case_padding))
-
-    for case_input in inputs:
-
-        mutacc_slurm_extract(
-            case_input[0],
-            case_input[1],
-            environment,
-            tmp_dir,
-            mutacc_conf=conf_file,
-            sbatch_template=sbatch_templ
-        )
-
-    rmtree(tmp_dir)
 
     for _, _, case_files in os.walk(case_dir):
         for filename in case_files:
@@ -82,3 +57,5 @@ def import_command(ctx, case_id, days_ago, environment, conf_file, padding, sbat
             ### IMPORT CASE AND DELETE FILE AFTERWARDS
             mutacc_import(str(case_path), conf_file)
             os.remove(case_path)
+
+    print('TEMPORARY FILE: ', tmp_dir)

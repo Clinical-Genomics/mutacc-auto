@@ -11,7 +11,9 @@ def get_bams_from_housekeeper(housekeeper_output):
 
         tags = fields[-1].split(',')
 
-        if len(tags) == 2 and tags[0].strip() == 'bam':
+        tag = tags[0].strip()
+
+        if len(tags) == 2 and tag == 'bam':
 
             sample = tags[-1].strip()
 

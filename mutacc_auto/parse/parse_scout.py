@@ -3,6 +3,13 @@ from datetime import datetime, timedelta
 
 from mutacc_auto.commands.scout_command import ScoutExportCases
 
+#The timestamp in the scout database seems to be given with
+#millisecond precision, it is therefor necessary to divide the
+#timestamp with 1000 to make it compatible with the timestamp from
+#the datetime module
+TIMESTAMP_DIVIDE = 1000.0
+
+
 def get_cases_from_scout(scout_output, days_ago=None):
 
     cases = json.loads(scout_output)
@@ -17,23 +24,8 @@ def get_cases_from_scout(scout_output, days_ago=None):
 
     for case in cases:
         case_date = case['updated_at']['$date']
-        case_date = datetime.fromtimestamp(case_date/1000.0)
+        case_date = datetime.fromtimestamp(case_date/TIMESTAMP_DIVIDE)
         if case_date > days_datetime:
             recent_cases.append(case)
 
     return recent_cases
-
-
-if __name__ == '__main__':
-
-    command = ScoutExportCases(case_id = '643594')
-
-    cases = get_cases_from_scout(command.check_output())
-
-    print(cases)
-
-    command = ScoutExportCases()
-
-    cases = get_cases_from_scout(command.check_output(), days_ago = 100)
-
-    print(cases)
