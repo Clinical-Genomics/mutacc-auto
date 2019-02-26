@@ -9,6 +9,7 @@ import os
 from mutacc_auto.utils.tmp_dir import TemporaryDirectory
 from mutacc_auto.recipes.input_recipe import get_inputs
 from mutacc_auto.recipes.extract_recipe import run_mutacc_extract
+from mutacc_auto.recipes.import_recipe import import_extracted_case
 
 LOG = logging.getLogger(__name__)
 
@@ -22,19 +23,22 @@ LOG = logging.getLogger(__name__)
 @click.pass_context
 def import_command(ctx, case_id, days_ago, environment, conf_file, padding, dry):
 
+    #Open and read config fore mutacc
     with open(Path(conf_file)) as yaml_handle:
 
         mutacc_conf = yaml.load(yaml_handle)
 
+    #Find directory where cases ready for import are stored
     case_dir = Path(mutacc_conf['case_dir'])
 
-
+    #Create a temporary dir to store created vcf, yaml, and script files
     with TemporaryDirectory(delete_dir=False) as tmp_dir:
 
-        inputs = get_inputs(tmp_dir, case_id=case_id, days_ago=days_ago)
+        #Prepare input for case with case_id or days since updated
+        inputs = get_inputs(tmp_dir, case_id=case_id, days_ago=days_ago, padding = padding)
 
         for case_input in inputs:
-
+            #Extract reads for every case
             run_mutacc_extract(
                 tmp_dir,
                 conf_file,
@@ -48,14 +52,15 @@ def import_command(ctx, case_id, days_ago, environment, conf_file, padding, dry)
                 dry=dry
             )
 
-
+    #For each case found in the case_dir stated in the mutacc config file
+    #import to database
     for _, _, case_files in os.walk(case_dir):
         for filename in case_files:
             case_path = case_dir.joinpath(filename)
             LOG.info("importing {}".format(filename))
 
             ### IMPORT CASE AND DELETE FILE AFTERWARDS
-            mutacc_import(str(case_path), conf_file)
+            import_extracted_case(str(case_path), conf_file)
             os.remove(case_path)
 
     print('TEMPORARY FILE: ', tmp_dir)

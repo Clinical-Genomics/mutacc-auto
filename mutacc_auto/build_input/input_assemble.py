@@ -67,21 +67,3 @@ def assemble_samples(individuals, bam_files = None):
 
 
     return samples
-
-if __name__ == '__main__':
-    #GET ARGUMENTS FROM COMMAND LINE
-    days = int(sys.argv[1])
-
-    #Checks if directory exists
-    directory = Path(str(sys.argv[2])).expanduser().absolute()
-    if not directory.is_dir():
-        LOG.critical("No such directory")
-        raise IOError
-
-    #FIND ALL CASES UPDATED days DAYS ago
-    cases = scout_call.find_cases_since(days=days)
-
-    #ASSEMBLE INPUT YAML FILE AND VCF FILE FOR EACH CASE FOUND
-    for case in cases:
-
-        assemble_case(case, directory)

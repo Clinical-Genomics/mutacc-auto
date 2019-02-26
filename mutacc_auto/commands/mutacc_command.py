@@ -33,11 +33,3 @@ class MutaccImport(MutaccCommand):
         self.add_subcommand('db')
         self.add_subcommand('import')
         self.add_argument(str(extracted_case_file))
-
-if __name__ == '__main__':
-
-    extract = MutAccExract('CONFIG', 123, 'CASE')
-    print(extract)
-
-    imports = MutaccImport('CONFIG','CASE_EXTRACT')
-    print(imports)

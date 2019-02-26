@@ -15,9 +15,3 @@ class TemporaryDirectory():
     def __exit__(self, exc_type, exc_value, traceback):
         if self.delete_dir:
             shutil.rmtree(self.name)
-
-if __name__=='__main__':
-
-    with TemporaryDirectory() as temporay_dir:
-
-        print(temporay_dir)

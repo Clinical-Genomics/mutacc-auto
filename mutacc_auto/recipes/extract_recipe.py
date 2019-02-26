@@ -10,6 +10,22 @@ def write_sbatch_script(tmp_dir,
                         email,
                         conda=False):
 
+    """
+        Function to write the sbatch script
+
+        Args:
+            tmp_dir (path): path to tmp dir where sbatch script is written
+            environment (str): environment to run mutacc under
+            mutacc_extract_command (str): mutacc command to extract reads
+            stdout_file (str): path to stdout file
+            stderr_file (str): path to stderr file
+            email (str): email to notify if job failes/completes
+            conda (bool): if True, activates environment with 'conda activate'
+
+        Returns:
+            sbatch_bath: path to sbatch script
+    """
+
     with SbatchScript(
             environment,
             stdout_file,
@@ -28,13 +44,30 @@ def write_sbatch_script(tmp_dir,
 
 
 def get_mutacc_extract_command(mutacc_conf, input_file, padding):
+    """
+        Writes the mutacc command
 
+        Args:
+            mutacc_conf (path): path to mutacc config file
+            input_file (path): path to case yaml file
+            padding (int): padding
+
+        Returns:
+            mutacc_extract_command (str): mutacc command to be run for extraction
+    """
     mutacc_extract_command = MutAccExract(mutacc_conf, padding, input_file)
 
     return str(mutacc_extract_command)
 
 def sbatch_run(sbatch_script_path, wait=False, dry=False):
+    """
+        Function to execute the sbatch script
 
+        Args:
+            sbatch_script_path (path): path to sbatch script
+            wait (bool): if True, run sbatch with --wait flag
+            dry (bool): if True, does not send job to slurm
+    """
     sbatch_command = SbatchCommand(sbatch_script_path, wait=wait)
 
     if not dry:
@@ -54,6 +87,12 @@ def run_mutacc_extract(tmp_dir,
                        conda=False,
                        wait=False,
                        dry=False):
+
+    """
+        Function to extract reads from case
+
+
+    """
 
     mutacc_extract_command = get_mutacc_extract_command(mutacc_conf, input_file, padding)
 

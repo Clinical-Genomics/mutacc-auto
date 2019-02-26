@@ -36,10 +36,3 @@ class ScoutExportCausativeVariants(ScoutCommand):
         self.add_subcommand('export')
         self.add_subcommand('variants')
         self.add_option('case-id', value=case_id)
-
-if __name__ == '__main__':
-
-    export = ScoutExportCausativeVariants(case_id = '643594')
-    print(export)
-
-    print(export.check_output())

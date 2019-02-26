@@ -13,8 +13,3 @@ class HousekeeperCommand(BaseCommand):
         self.add_subcommand('get')
         self.add_option('V', long=False)
         self.add_argument(case_id)
-
-if __name__ == '__main__':
-
-    command = HousekeeperCommand('64143')
-    print(command)

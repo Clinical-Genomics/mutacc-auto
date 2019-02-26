@@ -12,6 +12,16 @@ TIMESTAMP_DIVIDE = 1000.0
 
 def get_cases_from_scout(scout_output, days_ago=None):
 
+    """
+        Parses the scout output
+
+        Args:
+            scout_output (str): output from scout command
+            days_ago (int): number of days since case updated
+
+        Returns (list(dict)): list of dictionaries representing the cases 
+    """
+
     cases = json.loads(scout_output)
 
     if not days_ago:

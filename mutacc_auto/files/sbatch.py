@@ -45,10 +45,23 @@ class SbatchScript():
     @staticmethod
     def get_header(stdout_file, stderr_file, email):
 
+        """
+            Returns header to be printed in sbatch scripts
+
+            Args:
+                stdout_file (str): path to file where stdout is written
+                stderr_file (str): path to file where stderr is written
+                email (str): email to notify if job fails, or completes
+
+            Returns:
+                header (str): string with header, lines separated by newline
+        """
+
         header = ""
+        #write all constant header options
         for option in HEADER_OPTIONS:
             header += f"{HEADER_PREFIX} {option[0]}{option[2]}{option[1]}\n"
-
+        #write all variable header options
         header += f"{HEADER_PREFIX} -e {stderr_file}\n"
         header += f"{HEADER_PREFIX} -o {stdout_file}\n"
         header += f"{HEADER_PREFIX} --mail-user={email}\n"
@@ -58,6 +71,9 @@ class SbatchScript():
     @staticmethod
     def get_environment(environment, conda = False):
 
+        """
+            get command to run the correct environment
+        """
         if conda:
             return f"conda activate {environment}\n"
 
@@ -66,6 +82,10 @@ class SbatchScript():
     @staticmethod
     def get_shebang():
 
+        """
+            Returns the shebang line
+        """
+
         return SHEBANG
 
 
@@ -73,11 +93,12 @@ class SbatchScript():
 
         """
             Args:
-                template_file(str): path to file containing the headers to
-                                    be included.
-                environment(str): environment to be used
-                job_directory(Path): directory to store sbatch script
-                job_name(str): name of job
+
+                environment (str): environment to be used
+                stdout_file (str)
+                stderr_file (str)
+                email (str)
+                job_directory (str): directory where sbatch script is written
         """
 
         self.script_handle = tempfile.NamedTemporaryFile(
@@ -107,16 +128,7 @@ class SbatchScript():
 
     @property
     def path(self):
-
+        """
+            Returns path to sbatch script
+        """
         return self.script_handle.name
-
-if __name__ == '__main__':
-
-    tmp_dir = Path(tempfile.mkdtemp())
-
-    with SbatchScript('mutacc_env', 'std_out', 'std_err', 'EMAIL', tmp_dir, conda=True) as sbatch_handle:
-
-        sbatch_handle.write_section("COMMAND DSADSA dsa")
-
-    print(sbatch_handle.path)
-    sbatch_handle.delete_file()

@@ -7,7 +7,7 @@ LOG = logging.getLogger(__name__)
 class Command():
 
     """
-        Class to specify command line arguments and to run them using the
+        Class to specify commands and to run them using the
         subprocess module in python
     """
 
@@ -51,6 +51,10 @@ class Command():
 
     def check_output(self):
 
+        """
+            Returns the stdout of the command
+        """
+
         try:
 
             command_stdout = subprocess.check_output(self.command)
@@ -72,6 +76,10 @@ class Command():
 
     def call(self):
 
+        """
+            Calls the command
+        """
+
         try:
 
             subprocess.check_call(self.command)
@@ -86,13 +94,3 @@ class Command():
             raise
 
         LOG.debug("Executed:".format(str(self)))
-
-if __name__ == '__main__':
-
-    command = Command('ls')
-    command.add_option('l', long = False)
-    command.add_option('a', long = False)
-    command.add_argument('/Users/')
-    print(command)
-    print(command.command)
-    print(command.check_output())
