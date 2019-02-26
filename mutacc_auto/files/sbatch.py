@@ -18,7 +18,7 @@ SHEBANG = '#! /bin/bash -l'
 HEADER_PREFIX = '#SBATCH'
 
 JOBNAME = 'mutacc_' + get_timestamp()
-ACCOUNT = 'cust000'
+ACCOUNT = 'prod001'
 NODES = '1'
 TIME = '4:00:00'
 PRIORITY = 'low'
