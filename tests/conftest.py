@@ -32,3 +32,12 @@ def scout_case():
         case = yaml.load(case_handle)
 
     return case[0]
+
+@pytest.fixture
+def scout_output():
+
+    with open(SCOUT_OUT_FILE) as case_handle:
+
+        case = case_handle.read()
+
+    return case
