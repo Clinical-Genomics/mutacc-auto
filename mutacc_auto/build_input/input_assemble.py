@@ -5,58 +5,30 @@ import sys
 from pathlib import Path
 import logging
 
-
-from mutacc_auto.subprocessing import scout_call
-from mutacc_auto.subprocessing import hk_call
-
 LOG = logging.getLogger(__name__)
 
 class NoBamException(Exception):
     pass
 
-def assemble_case(case, directory):
-    """
-        Given an case id, assembles mutacc input file in yaml format
-        for case if all necessary information is found through scout and
-        housekeeper.
+def get_case(case, bam_file_paths, vcf_file_path):
 
-        Args:
-            case(dict): case object from scout query
-            directory(pathlib.Path): Path to directory where yaml is stored
-
-    """
     case_id = case['display_name']
 
+    #Instatiate case dictionary with case_id
     case_obj = {
-        'case_id': case_id
+            'case_id': case_id
     }
 
-    bam_files = hk_call.find_bams(case_id)
+    #Get sample list
+    samples_obj = assemble_samples(case['individuals'], bam_file_paths)
 
-    if len(bam_files.keys()) == 0:
+    return {
 
-        LOG.critical("No BAM-files found for case {}".format(case_id))
-        raise NoBamException
+        'case': case_obj,
+        'samples': samples_obj,
+        'variants': vcf_file_path
 
-    samples_obj = assemble_samples(case['individuals'], bam_files)
-
-    vcf_file = scout_call.create_vcf(case_id, directory)
-
-    with open(directory.joinpath("{}_mutacc_input.yaml".format(case_id)), 'w') as case_handle:
-
-        yaml.dump(
-            {
-            'case': case_obj,
-            'samples': samples_obj,
-            'variants': vcf_file
-            },
-            case_handle,
-            default_flow_style=False
-        )
-        case_file_name = case_handle.name
-
-
-    return case_file_name
+    }
 
 
 def assemble_samples(individuals, bam_files = None):
@@ -95,21 +67,3 @@ def assemble_samples(individuals, bam_files = None):
 
 
     return samples
-
-if __name__ == '__main__':
-    #GET ARGUMENTS FROM COMMAND LINE
-    days = int(sys.argv[1])
-
-    #Checks if directory exists
-    directory = Path(str(sys.argv[2])).expanduser().absolute()
-    if not directory.is_dir():
-        LOG.critical("No such directory")
-        raise IOError
-
-    #FIND ALL CASES UPDATED days DAYS ago
-    cases = scout_call.find_cases_since(days=days)
-
-    #ASSEMBLE INPUT YAML FILE AND VCF FILE FOR EACH CASE FOUND
-    for case in cases:
-
-        assemble_case(case, directory)
