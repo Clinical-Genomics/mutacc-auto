@@ -32,7 +32,7 @@ def import_command(ctx, case_id, days_ago, environment, conf_file, padding, dry)
     case_dir = Path(mutacc_conf['case_dir'])
 
     #Create a temporary dir to store created vcf, yaml, and script files
-    with TemporaryDirectory(delete_dir=False) as tmp_dir:
+    with TemporaryDirectory() as tmp_dir:
 
         #Prepare input for case with case_id or days since updated
         inputs = get_inputs(tmp_dir, case_id=case_id, days_ago=days_ago, padding = padding)
@@ -60,7 +60,6 @@ def import_command(ctx, case_id, days_ago, environment, conf_file, padding, dry)
             LOG.info("importing {}".format(filename))
 
             ### IMPORT CASE AND DELETE FILE AFTERWARDS
-            import_extracted_case(str(case_path), conf_file)
-            os.remove(case_path)
-
-    print('TEMPORARY FILE: ', tmp_dir)
+            if str(case_path).endswith('.mutacc'):
+                import_extracted_case(str(case_path), conf_file)
+                os.remove(case_path)

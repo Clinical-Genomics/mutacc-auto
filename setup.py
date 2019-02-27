@@ -15,7 +15,7 @@ from setuptools import find_packages, setup, Command
 # Package meta-data.
 NAME = 'mutacc_auto'
 DESCRIPTION = ''
-URL = 'https://github.com/adrosenbaum/mutacc_automatic'
+URL = 'https://github.com/Clinical-Genomics/mutacc-auto.git'
 EMAIL = 'adam.rosenbaum@scilifelab.se'
 AUTHOR = 'Adam Rosenbaum'
 REQUIRES_PYTHON = '>=3.6.0'
