@@ -20,7 +20,7 @@ class MutAccExract(MutaccCommand):
         super(MutAccExract, self).__init__(config_file)
 
         self.add_subcommand('extract')
-        self.add_option('padding', value=padding)
+        self.add_option('padding', value=str(padding))
         self.add_option('case', value=str(case_file))
 
 
