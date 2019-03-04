@@ -51,39 +51,41 @@ REQUIRED = parse_reqs()
 
 ### Check if Scout and HouseKeeper are installed
 
-# def check_scout():
-#
-#     try:
-#         scout_output = subprocess.check_output(['scout', '--version']).decode('utf-8')
-#
-#     except OSError as error:
-#         sys.exit('scout does not exist')
-#
-#     scout_version = int(scout_output.split(' ')[-1].replace('.', ''))
-#     min_scout_version = int(SCOUT_VERSION.replace('.',''))
-#
-#     if scout_version >= min_scout_version:
-#
-#         return True
-#
-# def check_housekeeper():
-#
-#     try:
-#         hk_output = subprocess.check_output(['housekeeper', '--version']).decode('utf-8')
-#
-#     except OSError as error:
-#         sys.exit('housekeeper does not exist')
-#
-#     hk_version = int(hk_output.split(' ')[-1].replace('.', ''))
-#     min_hk_version = int(HOUSEKEEPER_VERSION.replace('.',''))
-#
-#     if hk_version >= min_hk_version:
-#
-#         return True
-#
-#
-# if not check_scout(): sys.exit('Dependency problem: scout >= {} is required'.format(SCOUT_VERSION))
-# if not check_housekeeper(): sys.exit('Dependency problem: housekeeper >= {} is required'.format(HOUSEKEEPER_VERSION))
+def check_scout():
+
+    try:
+        scout_output = subprocess.check_output(['scout', '--version']).decode('utf-8')
+
+    except OSError as error:
+        sys.exit('scout does not exist')
+
+    scout_version = int(scout_output.split(' ')[-1].replace('.', ''))
+    min_scout_version = int(SCOUT_VERSION.replace('.',''))
+
+    if scout_version >= min_scout_version:
+
+        return True
+
+def check_housekeeper():
+
+    try:
+        hk_output = subprocess.check_output(['housekeeper', '--version']).decode('utf-8')
+
+    except OSError as error:
+        sys.exit('housekeeper does not exist')
+
+    hk_version = int(hk_output.split(' ')[-1].replace('.', ''))
+    min_hk_version = int(HOUSEKEEPER_VERSION.replace('.',''))
+
+    if hk_version >= min_hk_version:
+
+        return True
+
+#Check if istallation is made on Travis CI
+istravis = os.environ.get('TRAVIS') == 'true'
+if not istravis:
+    if not check_scout(): sys.exit('Dependency problem: scout >= {} is required'.format(SCOUT_VERSION))
+    if not check_housekeeper(): sys.exit('Dependency problem: housekeeper >= {} is required'.format(HOUSEKEEPER_VERSION))
 
 ###
 
