@@ -6,13 +6,6 @@ python:
 script:
   - py.test -rxs --cov mutacc_auto/ tests/
 
-before_install:
-  - git clone https://github.com/Clinical-Genomics/scout
-  - cd scout
-  - pip install --requirement requirements.txt --editable .
-  - cd ..
-  - pip install housekeeper
-
 install:
   - pip install -r requirements.txt -r requirements-dev.txt -e .
 
