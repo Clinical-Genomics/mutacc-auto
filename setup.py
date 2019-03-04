@@ -23,6 +23,7 @@ VERSION = '1.0.0'
 
 SCOUT_VERSION = '4.2.2'
 HOUSEKEEPER_VERSION = '2.2.8'
+MUTACC_VERSION = '1.0.0'
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -81,12 +82,27 @@ def check_housekeeper():
 
         return True
 
+def check_mutacc():
+
+    try:
+        mutacc_output = subprocess.check_output(['mutacc', '--version']).decode('utf-8')
+
+    except OSError as error:
+        sys.exit('scout does not exist')
+
+    mutacc_version = int(mutacc_output.split(' ')[-1].replace('.', ''))
+    min_mutacc_version = int(MUTACC_VERSION.replace('.',''))
+
+    if mutacc_version >= min_mutacc_version:
+
+        return True
+
 #Check if istallation is made on Travis CI
 istravis = os.environ.get('TRAVIS') == 'true'
 if not istravis:
     if not check_scout(): sys.exit('Dependency problem: scout >= {} is required'.format(SCOUT_VERSION))
     if not check_housekeeper(): sys.exit('Dependency problem: housekeeper >= {} is required'.format(HOUSEKEEPER_VERSION))
-
+    if not check_mutacc(): sys.exit('Dependency problem: mutacc >= {} is required'.format(MUTACC_VERSION))
 ###
 
 # The rest you shouldn't have to touch too much :)
