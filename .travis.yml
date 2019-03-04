@@ -1,0 +1,16 @@
+language: python
+
+python:
+  - "3.6"
+
+script:
+  - py.test -rxs --cov mutacc_auto/ tests/
+
+install:
+  - pip install -r requirements.txt -r requirements-dev.txt -e .
+
+notifications:
+  email: false
+
+after_success:
+  - coveralls

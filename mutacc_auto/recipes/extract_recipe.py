@@ -1,6 +1,10 @@
+import logging
+
 from mutacc_auto.commands.mutacc_command import MutAccExract
 from mutacc_auto.commands.sbatch_command import SbatchCommand
 from mutacc_auto.files.sbatch import SbatchScript
+
+LOG = logging.getLogger(__name__)
 
 def write_sbatch_script(tmp_dir,
                         environment,
@@ -55,6 +59,7 @@ def get_mutacc_extract_command(mutacc_conf, input_file, padding):
         Returns:
             mutacc_extract_command (str): mutacc command to be run for extraction
     """
+
     mutacc_extract_command = MutAccExract(mutacc_conf, padding, input_file)
 
     return str(mutacc_extract_command)
@@ -73,7 +78,7 @@ def sbatch_run(sbatch_script_path, wait=False, dry=False):
     if not dry:
         sbatch_command.call()
     else:
-        print('Command: ', sbatch_command)
+        LOG.info("Command; {}".format(sbatch_command))
 
 
 def run_mutacc_extract(tmp_dir,
@@ -103,4 +108,8 @@ def run_mutacc_extract(tmp_dir,
                                              stderr_file,
                                              email)
 
+
+
     sbatch_run(sbatch_script_path, wait, dry=dry)
+
+    return sbatch_script_path

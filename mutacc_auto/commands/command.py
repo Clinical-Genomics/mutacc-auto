@@ -82,7 +82,7 @@ class Command():
 
         try:
 
-            subprocess.check_call(self.command)
+            result = subprocess.check_call(self.command)
 
         except (OSError, subprocess.CalledProcessError):
 
@@ -94,3 +94,5 @@ class Command():
             raise
 
         LOG.debug("Executed:".format(str(self)))
+
+        return result

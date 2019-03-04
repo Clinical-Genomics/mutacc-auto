@@ -101,3 +101,11 @@ def test_get_inputs(mock_write_vcf, mock_get_bams, mock_get_cases, tmpdir, scout
     for input in inputs:
         assert input['padding'] == 0
         assert os.path.isfile(input['input_file'])
+
+    with patch("mutacc_auto.recipes.input_recipe.get_analysis_type", return_value = 'wgs') as mock_analysis:
+
+        inputs = get_inputs(tmp_dir, case_id = 'case_id', padding = 300)
+
+        for input in inputs:
+            assert input['padding'] == 300
+            assert os.path.isfile(input['input_file'])

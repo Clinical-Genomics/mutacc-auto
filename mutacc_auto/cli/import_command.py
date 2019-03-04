@@ -14,17 +14,18 @@ from mutacc_auto.recipes.import_recipe import import_extracted_case
 LOG = logging.getLogger(__name__)
 
 @click.command('import')
-@click.option('--case-id', type=str)
-@click.option('--days-ago', type=int)
-@click.option('--environment', type=str)
-@click.option('--conf-file', type=click.Path(exists=True))
-@click.option('--padding', type=int)
-@click.option('--dry', is_flag=True)
+@click.option('-c','--case-id', type=str)
+@click.option('-d','--days-ago', type=int)
+@click.option('-e','--environment', type=str)
+@click.option('-C','--config-file', type=click.Path(exists=True))
+@click.option('-p','--padding', type=int)
+@click.option('-D','--dry', is_flag=True)
+@click.option('-V','--verbose', is_flag=True)
 @click.pass_context
-def import_command(ctx, case_id, days_ago, environment, conf_file, padding, dry):
+def import_command(ctx, case_id, days_ago, environment, config_file, padding, dry, verbose):
 
     #Open and read config fore mutacc
-    with open(Path(conf_file)) as yaml_handle:
+    with open(Path(config_file)) as yaml_handle:
 
         mutacc_conf = yaml.load(yaml_handle)
 
@@ -32,25 +33,35 @@ def import_command(ctx, case_id, days_ago, environment, conf_file, padding, dry)
     case_dir = Path(mutacc_conf['case_dir'])
 
     #Create a temporary dir to store created vcf, yaml, and script files
-    with TemporaryDirectory(delete_dir=False) as tmp_dir:
+    with TemporaryDirectory() as tmp_dir:
+
+        LOG.info("All files are placed in {}".format(tmp_dir))
 
         #Prepare input for case with case_id or days since updated
         inputs = get_inputs(tmp_dir, case_id=case_id, days_ago=days_ago, padding = padding)
 
         for case_input in inputs:
             #Extract reads for every case
-            run_mutacc_extract(
-                tmp_dir,
-                conf_file,
-                case_input['input_file'],
-                case_input['padding'],
-                environment,
-                stdout_file='STDOUT.txt',
-                stderr_file='STDERR.txt',
-                email='EMAIL@...',
-                wait=True,
-                dry=dry
-            )
+            sbatch_script = run_mutacc_extract(
+                    tmp_dir,
+                    config_file,
+                    case_input['input_file'],
+                    case_input['padding'],
+                    environment,
+                    stdout_file='STDOUT.txt',
+                    stderr_file='STDERR.txt',
+                    email='EMAIL@...',
+                    wait=True,
+                    dry=dry
+                )
+
+            if verbose:
+
+                with open(sbatch_script) as sbatch_handle:
+
+                    LOG.info("\n{}".format(sbatch_handle.read()))
+
+
 
     #For each case found in the case_dir stated in the mutacc config file
     #import to database
@@ -60,7 +71,7 @@ def import_command(ctx, case_id, days_ago, environment, conf_file, padding, dry)
             LOG.info("importing {}".format(filename))
 
             ### IMPORT CASE AND DELETE FILE AFTERWARDS
-            import_extracted_case(str(case_path), conf_file)
-            os.remove(case_path)
-
-    print('TEMPORARY FILE: ', tmp_dir)
+            if str(case_path).endswith('.mutacc'):
+                if not dry:
+                    import_extracted_case(str(case_path), config_file)
+                    os.remove(case_path)
