@@ -7,3 +7,6 @@ the process of uploading new cases to the MutAcc database, export, and upgrade v
 takes use of other CLI apps in the Clinical-Genomics suite, [hosekeeper](https://github.com/Clinical-Genomics/housekeeper),
 and [scout](https://github.com/Clinical-Genomics/scout), to assemble all relevant files, and meta-data about a case as
 input to MutAcc.  
+
+##Install
+
