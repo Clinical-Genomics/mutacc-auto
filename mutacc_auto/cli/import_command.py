@@ -23,6 +23,7 @@ LOG = logging.getLogger(__name__)
 @click.option('-p','--padding', type=int)
 @click.option('-D','--dry', is_flag=True)
 @click.option('-V','--verbose', is_flag=True)
+@click.option('-k', '--conda', is_flag=True)
 @click.pass_context
 def import_command(ctx,
                    case_id,
@@ -33,7 +34,8 @@ def import_command(ctx,
                    email,
                    padding,
                    dry,
-                   verbose):
+                   verbose,
+                   conda):
 
     #Open and read config fore mutacc
     with open(Path(config_file)) as yaml_handle:
@@ -61,8 +63,9 @@ def import_command(ctx,
                     environment,
                     log_directory,
                     email=email,
+                    conda=conda,
                     wait=True,
-                    dry=dry
+                    dry=dry,
                 )
 
             if verbose:

@@ -4,43 +4,10 @@ import logging
 from pathlib import Path
 import tempfile
 
-
-def get_timestamp():
-
-    return str(datetime.datetime.now()).replace(' ','_').replace('.','_')
+from mutacc_auto.files.constants import *
 
 LOG = logging.getLogger(__name__)
 
-SHEBANG = '#!/bin/bash'
-
-HEADER_PREFIX = '#SBATCH'
-
-JOBNAME = 'mutacc_' + get_timestamp()
-ACCOUNT = 'prod001'
-NODES = '1'
-TIME = '4:00:00'
-PRIORITY = 'low'
-MAIL_FAIL = 'FAIL'
-MAIL_END = 'END'
-
-#SOME DEFAULT SBATCH OPTIONS
-# (OPTION, VALUE)
-HEADER_OPTIONS = (
-    ('A', ACCOUNT),
-    ('n', NODES),
-    ('t', TIME),
-    ('J', JOBNAME),
-    ('qos', PRIORITY),
-    ('mail-type', MAIL_FAIL),
-    ('mail-type', MAIL_END)
-)
-
-ACTIVATE_ENVIRONMENT = "source activate"
-
-STDERR_SUFFIX = "err"
-STDOUT_SUFFIX = "out"
-
-NEWLINE = "\n"
 
 class SbatchScript():
     """
@@ -72,9 +39,6 @@ class SbatchScript():
 
         #make log files
         log_directory = Path(log_directory)
-        if not log_directory.is_dir():
-            LOG.critical("No such directory: {}".format(log_directory))
-            raise FileNotFoundError
 
         #Include Jobname in log file names
         stderr_file = log_directory.joinpath(f"{JOBNAME}.{STDERR_SUFFIX}")
@@ -91,13 +55,17 @@ class SbatchScript():
         return header
 
     @staticmethod
-    def get_environment(environment):
+    def get_environment(environment, conda):
 
         """
             get command to run the correct environment
         """
+        if conda:
+            activate_command = CONDA_ACTIVATE
+        else:
+            activate_command = SOURCE_ACTIVATE
 
-        return f"{ACTIVATE_ENVIRONMENT} {environment}{NEWLINE}"
+        return f"{activate_command} {environment}{NEWLINE}"
 
     @staticmethod
     def get_shebang():
@@ -109,7 +77,7 @@ class SbatchScript():
         return SHEBANG
 
 
-    def __init__(self, job_directory, environment, log_directory, email=None):
+    def __init__(self, job_directory, environment, log_directory, email=None, conda=False):
 
         """
             Args:
@@ -126,7 +94,7 @@ class SbatchScript():
                                         )
         self.shebang = self.get_shebang()
         self.header = self.get_header(log_directory, email=email)
-        self.environment = self.get_environment(environment)
+        self.environment = self.get_environment(environment, conda)
 
         #Write sections in script
         self.write_section(self.shebang)

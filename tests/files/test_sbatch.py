@@ -23,7 +23,8 @@ def test_SbatchScript(tmpdir):
 
     with SbatchScript(tmp_dir,
                      'mutacc_env',
-                      tmp_dir) as sbatch_script:
+                      tmp_dir,
+                      conda=True) as sbatch_script:
 
         sbatch_script.write_section('Command to run')
 
@@ -31,11 +32,6 @@ def test_SbatchScript(tmpdir):
 
     assert Path(sbatch_path).exists()
 
-    with pytest.raises(FileNotFoundError) as error:
-
-        sbatch_script = SbatchScript(tmp_dir,
-                                     'mutacc_env',
-                                     '/fds9Xs/fdsuerw')
 
 def test_get_timestamp():
 

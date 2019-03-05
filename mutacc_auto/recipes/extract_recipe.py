@@ -10,7 +10,8 @@ def write_sbatch_script(tmp_dir,
                         environment,
                         mutacc_extract_command,
                         log_directory,
-                        email):
+                        email,
+                        conda=False):
 
     """
         Function to write the sbatch script
@@ -31,7 +32,8 @@ def write_sbatch_script(tmp_dir,
             tmp_dir,
             environment,
             log_directory,
-            email,
+            email=email,
+            conda=conda
         ) as sbatch_handle:
 
         sbatch_handle.write_section(mutacc_extract_command)
@@ -83,6 +85,7 @@ def run_mutacc_extract(tmp_dir,
                        environment,
                        log_directory,
                        email,
+                       conda=False,
                        wait=False,
                        dry=False):
 
@@ -98,7 +101,8 @@ def run_mutacc_extract(tmp_dir,
                                              environment,
                                              mutacc_extract_command,
                                              log_directory,
-                                             email)
+                                             email,
+                                             conda)
 
 
 
