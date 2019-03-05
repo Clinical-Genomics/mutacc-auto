@@ -65,7 +65,7 @@ def import_command(ctx,
                     email=email,
                     conda=conda,
                     wait=True,
-                    dry=dry,
+                    dry=dry
                 )
 
             if verbose:
