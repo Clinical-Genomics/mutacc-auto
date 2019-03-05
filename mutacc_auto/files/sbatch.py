@@ -1,19 +1,17 @@
 
 import datetime
 import logging
-import re
 from pathlib import Path
-from shutil import rmtree
 import tempfile
 
 
 def get_timestamp():
 
-    return str(datetime.datetime.now().timestamp())
+    return str(datetime.datetime.now()).replace(' ','_').replace('.','_')
 
 LOG = logging.getLogger(__name__)
 
-SHEBANG = '#! /bin/bash -l'
+SHEBANG = '#!/bin/bash'
 
 HEADER_PREFIX = '#SBATCH'
 
@@ -25,17 +23,24 @@ PRIORITY = 'low'
 MAIL_FAIL = 'FAIL'
 MAIL_END = 'END'
 
-#SOME CONSTAN SBATCH
-# (OPTION, VALUE, SEPARATOR)
+#SOME DEFAULT SBATCH OPTIONS
+# (OPTION, VALUE)
 HEADER_OPTIONS = (
-    ('-A', ACCOUNT, ' '),
-    ('-n', NODES, ' '),
-    ('-t', TIME, ' '),
-    ('-J', JOBNAME, ' '),
-    ('--qos', PRIORITY, '='),
-    ('--mail-type', MAIL_FAIL, '=' ),
-    ('--mail-type', MAIL_END, '=' )
+    ('A', ACCOUNT),
+    ('n', NODES),
+    ('t', TIME),
+    ('J', JOBNAME),
+    ('qos', PRIORITY),
+    ('mail-type', MAIL_FAIL),
+    ('mail-type', MAIL_END)
 )
+
+ACTIVATE_ENVIRONMENT = "source activate"
+
+STDERR_SUFFIX = "err"
+STDOUT_SUFFIX = "out"
+
+NEWLINE = "\n"
 
 class SbatchScript():
     """
@@ -43,41 +48,56 @@ class SbatchScript():
     """
 
     @staticmethod
-    def get_header(stdout_file, stderr_file, email):
+    def get_header(log_directory, email=None):
 
         """
             Returns header to be printed in sbatch scripts
 
             Args:
-                stdout_file (str): path to file where stdout is written
-                stderr_file (str): path to file where stderr is written
+                log_directory (path): path to dir for log files
                 email (str): email to notify if job fails, or completes
 
             Returns:
                 header (str): string with header, lines separated by newline
         """
 
+        #Instantiate header string
         header = ""
         #write all constant header options
         for option in HEADER_OPTIONS:
-            header += f"{HEADER_PREFIX} {option[0]}{option[2]}{option[1]}\n"
-        #write all variable header options
-        header += f"{HEADER_PREFIX} -e {stderr_file}\n"
-        header += f"{HEADER_PREFIX} -o {stdout_file}\n"
-        header += f"{HEADER_PREFIX} --mail-user={email}\n"
+            if len(option[0]) == 1:
+                header += f"{HEADER_PREFIX} -{option[0]} {option[1]}{NEWLINE}"
+            else:
+                header += f"{HEADER_PREFIX} --{option[0]}={option[1]}{NEWLINE}"
+
+        #make log files
+        log_directory = Path(log_directory)
+        if not log_directory.is_dir():
+            LOG.critical("No such directory: {}".format(log_directory))
+            raise FileNotFoundError
+
+        #Include Jobname in log file names
+        stderr_file = log_directory.joinpath(f"{JOBNAME}.{STDERR_SUFFIX}")
+        stdout_file = log_directory.joinpath(f"{JOBNAME}.{STDOUT_SUFFIX}")
+
+        #write log files to header
+        header += f"{HEADER_PREFIX} -e {stderr_file}{NEWLINE}"
+        header += f"{HEADER_PREFIX} -o {stdout_file}{NEWLINE}"
+
+        #If email is given, include this in header
+        if email:
+            header += f"{HEADER_PREFIX} --mail-user={email}{NEWLINE}"
 
         return header
 
     @staticmethod
-    def get_environment(environment, conda = False):
+    def get_environment(environment):
 
         """
             get command to run the correct environment
         """
-        if conda:
-            return f"conda activate {environment}\n"
 
-        return f"source activate {environment}"
+        return f"{ACTIVATE_ENVIRONMENT} {environment}{NEWLINE}"
 
     @staticmethod
     def get_shebang():
@@ -89,16 +109,14 @@ class SbatchScript():
         return SHEBANG
 
 
-    def __init__(self, environment, stdout_file, stderr_file, email, job_directory, conda = False):
+    def __init__(self, job_directory, environment, log_directory, email=None):
 
         """
             Args:
-
+                job_directory (path): directory where sbatch script is written
                 environment (str): environment to be used
-                stdout_file (str)
-                stderr_file (str)
-                email (str)
-                job_directory (str): directory where sbatch script is written
+                log_directory (path): path to dir for log files
+                email (str): email to notify
         """
 
         self.script_handle = tempfile.NamedTemporaryFile(
@@ -107,9 +125,10 @@ class SbatchScript():
                                         delete = False
                                         )
         self.shebang = self.get_shebang()
-        self.header = self.get_header(stdout_file,stderr_file,email)
-        self.environment = self.get_environment(environment, conda)
+        self.header = self.get_header(log_directory, email=email)
+        self.environment = self.get_environment(environment)
 
+        #Write sections in script
         self.write_section(self.shebang)
         self.write_section(self.header)
         self.write_section(self.environment)
@@ -123,7 +142,7 @@ class SbatchScript():
         self.script_handle.close()
 
     def write_section(self, section):
-        self.script_handle.write(section+'\n')
+        self.script_handle.write(f"{section}{NEWLINE}")
 
 
     @property
