@@ -9,8 +9,7 @@ LOG = logging.getLogger(__name__)
 def write_sbatch_script(tmp_dir,
                         environment,
                         mutacc_extract_command,
-                        stdout_file,
-                        stderr_file,
+                        log_directory,
                         email,
                         conda=False):
 
@@ -21,8 +20,7 @@ def write_sbatch_script(tmp_dir,
             tmp_dir (path): path to tmp dir where sbatch script is written
             environment (str): environment to run mutacc under
             mutacc_extract_command (str): mutacc command to extract reads
-            stdout_file (str): path to stdout file
-            stderr_file (str): path to stderr file
+            log_directory (path): path to directory for log files
             email (str): email to notify if job failes/completes
             conda (bool): if True, activates environment with 'conda activate'
 
@@ -31,11 +29,10 @@ def write_sbatch_script(tmp_dir,
     """
 
     with SbatchScript(
-            environment,
-            stdout_file,
-            stderr_file,
-            email,
             tmp_dir,
+            environment,
+            log_directory,
+            email=email,
             conda=conda
         ) as sbatch_handle:
 
@@ -86,8 +83,7 @@ def run_mutacc_extract(tmp_dir,
                        input_file,
                        padding,
                        environment,
-                       stdout_file,
-                       stderr_file,
+                       log_directory,
                        email,
                        conda=False,
                        wait=False,
@@ -104,9 +100,9 @@ def run_mutacc_extract(tmp_dir,
     sbatch_script_path = write_sbatch_script(tmp_dir,
                                              environment,
                                              mutacc_extract_command,
-                                             stdout_file,
-                                             stderr_file,
-                                             email)
+                                             log_directory,
+                                             email,
+                                             conda)
 
 
 

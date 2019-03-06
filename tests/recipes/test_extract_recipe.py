@@ -8,13 +8,12 @@ from mutacc_auto.commands.command import Command
 
 def test_write_sbatch_script(tmpdir):
 
-    tmp_dir = Path(tmpdir.mkdir('test_get_inputs'))
+    tmp_dir = Path(tmpdir.mkdir('test_write_sbatch_script'))
 
     sbatch_path = write_sbatch_script(tmp_dir,
                                       'environment',
                                       'mutacc extract ...',
-                                      'stdout_file',
-                                      'stderr_file',
+                                      tmp_dir,
                                       'email')
 
     assert os.path.isfile(sbatch_path)
@@ -34,7 +33,7 @@ def test_sbatch_run(command):
 @patch('mutacc_auto.recipes.extract_recipe.sbatch_run')
 def test_run_mutacc_extract(mock_sbatch_run, tmpdir):
 
-    tmp_dir = Path(tmpdir.mkdir('test_get_inputs'))
+    tmp_dir = Path(tmpdir.mkdir('test_run_mutacc_extract'))
 
     run_mutacc_extract(
         tmp_dir,
@@ -42,7 +41,6 @@ def test_run_mutacc_extract(mock_sbatch_run, tmpdir):
         'input_file',
         123,
         'env',
-        'stdout',
-        'stderr',
+        tmp_dir,
         'email',
     )

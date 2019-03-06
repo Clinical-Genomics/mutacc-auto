@@ -21,6 +21,7 @@ AUTHOR = 'Adam Rosenbaum'
 REQUIRES_PYTHON = '>=3.6.0'
 VERSION = '1.0.0'
 
+#Required versions of scout, hk, and mutacc
 SCOUT_VERSION = '4.2.2'
 HOUSEKEEPER_VERSION = '2.2.8'
 MUTACC_VERSION = '1.0.0'
@@ -88,7 +89,7 @@ def check_mutacc():
         mutacc_output = subprocess.check_output(['mutacc', '--version']).decode('utf-8')
 
     except OSError as error:
-        sys.exit('scout does not exist')
+        sys.exit('mutacc does not exist')
 
     mutacc_version = int(mutacc_output.split(' ')[-1].replace('.', ''))
     min_mutacc_version = int(MUTACC_VERSION.replace('.',''))

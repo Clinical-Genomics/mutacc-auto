@@ -39,6 +39,8 @@ def test_import_command(
             '--case-id', 'test_id',
             '--environment', 'env',
             '--config-file', conf_path,
+            '--log-directory', str(tmp_dir),
+            '--email', 'email@email.com',
             '--dry',
             '--verbose'
         ]
@@ -51,6 +53,7 @@ def test_import_command(
             '--days-ago', '300',
             '--environment', 'env',
             '--config-file', conf_path,
+            '--log-directory', tmp_dir
         ]
     )
 

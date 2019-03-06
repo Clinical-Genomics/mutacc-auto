@@ -18,11 +18,24 @@ LOG = logging.getLogger(__name__)
 @click.option('-d','--days-ago', type=int)
 @click.option('-e','--environment', type=str)
 @click.option('-C','--config-file', type=click.Path(exists=True))
+@click.option('-L', '--log-directory', type=click.Path(exists=True))
+@click.option('-E', '--email', type=str)
 @click.option('-p','--padding', type=int)
 @click.option('-D','--dry', is_flag=True)
 @click.option('-V','--verbose', is_flag=True)
+@click.option('-k', '--conda', is_flag=True)
 @click.pass_context
-def import_command(ctx, case_id, days_ago, environment, config_file, padding, dry, verbose):
+def import_command(ctx,
+                   case_id,
+                   days_ago,
+                   environment,
+                   config_file,
+                   log_directory,
+                   email,
+                   padding,
+                   dry,
+                   verbose,
+                   conda):
 
     #Open and read config fore mutacc
     with open(Path(config_file)) as yaml_handle:
@@ -48,9 +61,9 @@ def import_command(ctx, case_id, days_ago, environment, config_file, padding, dr
                     case_input['input_file'],
                     case_input['padding'],
                     environment,
-                    stdout_file='STDOUT.txt',
-                    stderr_file='STDERR.txt',
-                    email='EMAIL@...',
+                    log_directory,
+                    email=email,
+                    conda=conda,
                     wait=True,
                     dry=dry
                 )
