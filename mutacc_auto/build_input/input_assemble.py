@@ -5,6 +5,21 @@ import sys
 from pathlib import Path
 import logging
 
+#Fields in a scout case document to be included as meta-data
+SCOUT_CASE_FILDS = (
+    'genome_build',
+    'genome_version',
+    'dynamic_gene_list',
+    'panels',
+    'rank_model_version',
+    'rank_score_threshold',
+    'phenotype_terms',
+    'phenotype_groups',
+    'diagnosis_phenotypes',
+    'diagnosis_genes'
+)
+
+
 LOG = logging.getLogger(__name__)
 
 class NoBamException(Exception):
@@ -18,6 +33,13 @@ def get_case(case, bam_file_paths, vcf_file_path):
     case_obj = {
             'case_id': case_id
     }
+
+    #Iterate over scout fields and add to case_obj.
+    for field in SCOUT_CASE_FILDS:
+
+        if case.get(field):
+
+            case_obj[field] = case[field]
 
     #Get sample list
     samples_obj = assemble_samples(case['individuals'], bam_file_paths)
