@@ -61,7 +61,7 @@ def get_mutacc_extract_command(mutacc_conf, input_file, padding):
 
     return str(mutacc_extract_command)
 
-def sbatch_run(sbatch_script_path, wait=False, dry=False):
+def sbatch_run(sbatch_script_path, dry=False):
     """
         Function to execute the sbatch script
 
@@ -70,7 +70,7 @@ def sbatch_run(sbatch_script_path, wait=False, dry=False):
             wait (bool): if True, run sbatch with --wait flag
             dry (bool): if True, does not send job to slurm
     """
-    sbatch_command = SbatchCommand(sbatch_script_path, wait=wait)
+    sbatch_command = SbatchCommand(sbatch_script_path)
 
     if not dry:
         sbatch_command.call()
@@ -106,6 +106,6 @@ def run_mutacc_extract(tmp_dir,
 
 
 
-    sbatch_run(sbatch_script_path, wait, dry=dry)
+    sbatch_run(sbatch_script_path, dry=dry)
 
     return sbatch_script_path

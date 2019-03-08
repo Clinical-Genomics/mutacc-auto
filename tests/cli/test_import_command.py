@@ -10,37 +10,31 @@ from mutacc_auto.cli.root import cli
 INPUTS_LIST = [{'input_file': 'path_to_file', 'padding':600}]*2
 SBATCH_TEMPLATE = "tests/fixtures/sbatch_template.txt"
 
-@patch('mutacc_auto.cli.import_command.get_inputs')
-@patch('mutacc_auto.cli.import_command.run_mutacc_extract')
+TMP_DIR_NAME = 'test_import_command'
+CONF_FILE_NAME = 'tmp_conf.yaml'
+IMPORT_FILE_NAME = 'tmp_test.mutacc'
+
 @patch('mutacc_auto.cli.import_command.import_extracted_case')
 def test_import_command(
         mock_import,
-        mock_extract,
-        mock_inputs,
         tmpdir
     ):
 
-    tmp_dir = Path(tmpdir.mkdir('test_import_command'))
-    mock_inputs.return_value = INPUTS_LIST
-    mock_extract.return_value = SBATCH_TEMPLATE
+    tmp_dir = Path(tmpdir.mkdir(TMP_DIR_NAME))
 
-    with open(tmp_dir.joinpath('tmp_conf.yaml'), 'w') as conf_handle:
+    with open(tmp_dir.joinpath(CONF_FILE_NAME), 'w') as conf_handle:
 
         conf_dict = {'case_dir': str(tmp_dir)}
         yaml.dump(conf_dict, conf_handle)
         conf_path = conf_handle.name
 
-    with open(tmp_dir.joinpath('tmp_test.mutacc'), 'w') as handle:
+    with open(tmp_dir.joinpath(IMPORT_FILE_NAME), 'w') as handle:
         handle.write('\n')
 
     runner = CliRunner()
     result = runner.invoke(cli, [
             'import',
-            '--case-id', 'test_id',
-            '--environment', 'env',
             '--config-file', conf_path,
-            '--log-directory', str(tmp_dir),
-            '--email', 'email@email.com',
             '--dry',
             '--verbose'
         ]
@@ -50,11 +44,13 @@ def test_import_command(
 
     result = runner.invoke(cli, [
             'import',
-            '--days-ago', '300',
-            '--environment', 'env',
             '--config-file', conf_path,
-            '--log-directory', tmp_dir
         ]
     )
 
     assert result.exit_code == 0
+
+    mock_import.assert_called_with(
+                str(tmp_dir.joinpath(IMPORT_FILE_NAME)),
+                conf_path
+            )

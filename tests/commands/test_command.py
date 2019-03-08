@@ -35,9 +35,9 @@ def test_Command():
 
 def test_SbatchCommand():
 
-    command = SbatchCommand('script', wait = True)
+    command = SbatchCommand('script')
 
-    assert str(command) == "sbatch --wait script"
+    assert str(command) == "sbatch script"
 
 def test_ScoutExportCases():
 
