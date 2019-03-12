@@ -2,7 +2,13 @@ import json
 from datetime import datetime, timedelta
 
 from mutacc_auto.commands.scout_command import ScoutExportCases
-from mutacc_auto.parse.vcf_constants import *
+from mutacc_auto.parse.vcf_constants import (SCOUT_TO_FORMAT,
+                                             SCOUT_TO_INFO,
+                                             HEADER,
+                                             NEWLINE,
+                                             TAB,
+                                             COLUMN_NAMES,
+                                             SCOUT_TO_COLUMNS)
 
 #The timestamp in the scout database seems to be given with
 #millisecond precision, it is therefor necessary to divide the
@@ -63,75 +69,122 @@ def get_vcf_from_json(scout_vcf_output):
 
     #Write header of vcf
     for header_line in HEADER:
-        vcf_string += header_line + '\n'
+        vcf_string += header_line + NEWLINE
 
     #Get samples
     samples = [sample['sample_id'] for sample in scout_vcf_output[0]['samples']]
-    samples = '\t'.join(samples)
 
-    vcf_string += f"#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t{samples}\n"
+    #Append sample names to the COLUMN_NAMES list
+    column_names = COLUMN_NAMES + samples
+    column_names = TAB.join(column_names)
 
+    vcf_string += column_names + NEWLINE
 
     #Write variants
     for variant in scout_vcf_output:
 
-        entry= []
-        entry.append(str(variant['chromosome'])) #CHROM
-        entry.append(str(variant['position'])) #POS
-        entry.append(str(variant['dbsnp_id'] or '.')) #ID
-        entry.append(str(variant['reference'])) #REF
-        entry.append(str(variant['alternative'])) #ALT
-        entry.append(str(variant['quality'])) #QUAL
-        entry.append('PASS') #FILTER
+        #Write column values
+        record = get_columns(variant)
 
         #write INFO
-        info = []
-        for ID in SCOUT_TO_INFO.keys():
+        info = get_info(variant)
+        record.append(info)
 
-            info_string = f"{SCOUT_TO_INFO[ID]}={int(variant[ID])}"
-            info.append(info_string)
-
-        if variant['category'].lower() == 'snv':
-            info_string = f"TYPE={variant['sub_category']}"
-
-        else:
-            info_string = f"SVTYPE={variant['sub_category']}"
-
-        info.append(info_string)
-
-        info = ';'.join(info)
-
-        entry.append(info)
-
-        #Write the format and genotype calls
+        #Write the format a
         format = ':'.join([SCOUT_TO_FORMAT[ID] for ID in SCOUT_TO_FORMAT.keys()])
+        record.append(format)
 
-        entry.append(format)
+        #write genotypes for each sample
+        samples = get_genotypes(variant)
+        record.append(samples)
 
-        samples = []
-        for sample in variant['samples']:
+        record = TAB.join(record) + NEWLINE
 
-            gt_calls = []
-            for ID in SCOUT_TO_FORMAT.keys():
-
-                if type(sample[ID]) == list:
-
-                    ID_value = ','.join([str(element) for element in sample[ID]])
-
-                else:
-                    ID_value = str(sample[ID])
-
-                gt_calls.append(ID_value)
-
-            gt_calls = ':'.join(gt_calls)
-            samples.append(gt_calls)
-
-        samples = '\t'.join(samples)
-
-        entry.append(samples)
-
-        entry = '\t'.join(entry) + '\n'
-
-        vcf_string += entry
+        #Add variant record to vcf_string
+        vcf_string += record
 
     return vcf_string
+
+def get_columns(variant):
+    """
+        Given a variant object from scout, write the columns CHR - FILTER
+        as a string with values separated by tab
+
+        Args:
+            variant (dict): dictionary of scout variant object
+        Returns:
+            record (str): values CHR-FILTER as a string
+    """
+    record = []
+
+    for column in SCOUT_TO_COLUMNS:
+
+        if type(variant[column]) == list:
+            column_value = ','.join([str(element) for element in variant[column]])
+
+        else:
+            column_value = str(variant[column])
+
+        record.append(column_value)
+
+    return record
+
+def get_info(variant):
+    """
+        Given a variant object from scout, write the INFO column
+        for a variant.
+
+        Args:
+            variant (dict): dictionary of scout variant object
+        Returns:
+            info (str): INFO string
+    """
+    info = []
+    for ID in SCOUT_TO_INFO.keys():
+
+        info_string = f"{SCOUT_TO_INFO[ID]}={int(variant[ID])}"
+        info.append(info_string)
+
+    if variant['category'].lower() == 'snv':
+        info_string = f"TYPE={variant['sub_category']}"
+
+    else:
+        info_string = f"SVTYPE={variant['sub_category']}"
+
+    info.append(info_string)
+
+    info = ';'.join(info)
+
+    return info
+
+def get_genotypes(variant):
+    """
+        Given a variant object from scout, write the genotypes column for each
+        sample.
+
+        Args:
+            variant (dict): dictionary of scout variant object
+        Returns:
+            samples (str): genotypes for each sample
+    """
+    samples = []
+    for sample in variant['samples']:
+
+        gt_calls = []
+        for ID in SCOUT_TO_FORMAT.keys():
+
+            if type(sample[ID]) == list:
+
+                ID_value = ','.join([str(element) for element in sample[ID]])
+
+            else:
+                ID_value = str(sample[ID])
+
+            gt_calls.append(ID_value)
+
+        gt_calls = ':'.join(gt_calls)
+        samples.append(gt_calls)
+
+    samples = TAB.join(samples)
+
+    return samples

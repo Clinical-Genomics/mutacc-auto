@@ -30,3 +30,31 @@ HEADER = (
     '##FORMAT=<ID=AD,Number=R,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">'
 
 )
+
+NEWLINE = '\n'
+
+TAB = '\t'
+
+COLUMN_NAMES = [
+    '#CHROM',
+    'POS',
+    'ID',
+    'REF',
+    'ALT',
+    'QUAL',
+    'FILTER',
+    'INFO',
+    'FORMAT'
+]
+
+SCOUT_TO_COLUMNS = (
+
+    'chromosome', #CHROM
+    'position',   #POS
+    'dbsnp_id',   #ID
+    'reference',  #REF
+    'alternative',#ALT
+    'quality',    #QUAL
+    'filters'     #FILTER
+
+)
