@@ -11,6 +11,7 @@ import os
 HK_OUT_FILE = "tests/fixtures/HK_output_test.txt"
 SCOUT_OUT_FILE = "tests/fixtures/scout_output.json"
 TEST_VCF = "tests/fixtures/test_vcf.vcf"
+TEST_SCOUT_VARIANT = "tests/fixtures/scout_variant_output.json"
 
 def mock_hk_output(case_id):
 
@@ -28,9 +29,9 @@ def mock_scout_output(case_id):
 
     return scout_out
 
-def mock_vcf(case_id):
+def mock_scout_variant(case_id):
 
-    with open(TEST_VCF) as vcf_handle:
+    with open(TEST_SCOUT_VARIANT) as vcf_handle:
 
         vcf_out = vcf_handle.read()
 
@@ -49,7 +50,7 @@ def test_get_bams():
 
     assert len(bams) == 3
 
-@patch.object(Command, 'check_output', mock_vcf)
+@patch.object(Command, 'check_output', mock_scout_variant)
 def test_write_vcf(tmpdir):
     tmp_dir = Path(tmpdir.mkdir('test_write_vcf'))
     vcf_path = write_vcf('case_id', tmp_dir)

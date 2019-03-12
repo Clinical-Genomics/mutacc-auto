@@ -47,6 +47,16 @@ def get_cases_from_scout(scout_output, days_ago=None):
 
 def get_vcf_from_json(scout_vcf_output):
 
+    """
+        Reconstructs vcf from scout variant object
+
+        Args:
+            scout_vcf_output (str): string returned by command 'scout export variants --json'
+
+        Returns:
+            vcf_string (str): string with vcf content
+    """
+
     scout_vcf_output = json.loads(scout_vcf_output)
 
     vcf_string = ""
