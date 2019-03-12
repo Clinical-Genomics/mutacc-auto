@@ -29,10 +29,13 @@ class ScoutExportCases(ScoutCommand):
 
 class ScoutExportCausativeVariants(ScoutCommand):
 
-    def __init__(self, case_id):
+    def __init__(self, case_id, json_output = True):
 
         super(ScoutExportCausativeVariants, self).__init__()
 
         self.add_subcommand('export')
         self.add_subcommand('variants')
+
+        if json_output: self.add_option('json')
+
         self.add_option('case-id', value=case_id)
