@@ -8,6 +8,9 @@ import os
 
 from mutacc_auto.recipes.import_recipe import import_extracted_case
 
+MUTACC_IMPORT_DIR = 'imports'
+MUTACC_ROOT_DIR = 'root_dir'
+
 LOG = logging.getLogger(__name__)
 
 @click.command('import')
@@ -26,13 +29,13 @@ def import_command(ctx,
         mutacc_conf = yaml.load(yaml_handle)
 
     #Find directory where cases ready for import are stored
-    case_dir = Path(mutacc_conf['case_dir'])
+    import_dir = Path(mutacc_conf[MUTACC_ROOT_DIR]).joinpath(MUTACC_IMPORT_DIR)
 
-    #For each case found in the case_dir stated in the mutacc config file
+    #For each case found in the import_dir stated in the mutacc config file
     #import to database
-    for _, _, case_files in os.walk(case_dir):
+    for _, _, case_files in os.walk(import_dir):
         for filename in case_files:
-            case_path = case_dir.joinpath(filename)
+            case_path = import_dir.joinpath(filename)
 
             ### IMPORT CASE AND DELETE FILE AFTERWARDS
             if str(case_path).endswith('.mutacc'):

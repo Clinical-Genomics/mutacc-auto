@@ -36,14 +36,6 @@ def extract_command(ctx,
                     verbose,
                     conda):
 
-    #Open and read config fore mutacc
-    with open(Path(config_file)) as yaml_handle:
-
-        mutacc_conf = yaml.load(yaml_handle)
-
-    #Find directory where cases ready for import are stored
-    case_dir = Path(mutacc_conf['case_dir'])
-
     #Create a temporary dir to store created vcf, yaml, and script files
     with TemporaryDirectory() as tmp_dir:
 

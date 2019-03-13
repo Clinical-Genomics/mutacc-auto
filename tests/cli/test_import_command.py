@@ -21,14 +21,16 @@ def test_import_command(
     ):
 
     tmp_dir = Path(tmpdir.mkdir(TMP_DIR_NAME))
+    import_dir = tmp_dir.joinpath('imports')
+    Path.mkdir(import_dir)
 
     with open(tmp_dir.joinpath(CONF_FILE_NAME), 'w') as conf_handle:
 
-        conf_dict = {'case_dir': str(tmp_dir)}
+        conf_dict = {'root_dir': str(tmp_dir)}
         yaml.dump(conf_dict, conf_handle)
         conf_path = conf_handle.name
 
-    with open(tmp_dir.joinpath(IMPORT_FILE_NAME), 'w') as handle:
+    with open(import_dir.joinpath(IMPORT_FILE_NAME), 'w') as handle:
         handle.write('\n')
 
     runner = CliRunner()
@@ -51,6 +53,6 @@ def test_import_command(
     assert result.exit_code == 0
 
     mock_import.assert_called_with(
-                str(tmp_dir.joinpath(IMPORT_FILE_NAME)),
+                str(import_dir.joinpath(IMPORT_FILE_NAME)),
                 conf_path
             )
