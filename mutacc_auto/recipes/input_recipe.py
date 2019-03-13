@@ -5,7 +5,7 @@ import subprocess
 from mutacc_auto.utils.tmp_dir import TemporaryDirectory
 from mutacc_auto.commands.scout_command import ScoutExportCases, ScoutExportCausativeVariants
 from mutacc_auto.commands.housekeeper_command import HousekeeperCommand
-from mutacc_auto.parse.parse_scout import get_cases_from_scout
+from mutacc_auto.parse.parse_scout import get_cases_from_scout, get_vcf_from_json
 from mutacc_auto.parse.parse_housekeeper import get_bams_from_housekeeper
 from mutacc_auto.build_input.input_assemble import get_case
 
@@ -66,7 +66,8 @@ def write_vcf(case_id, directory):
         ) as vcf_handle:
 
         vcf_command = ScoutExportCausativeVariants(case_id)
-        vcf_content = vcf_command.check_output()
+        vcf_scout_output = vcf_command.check_output()
+        vcf_content = get_vcf_from_json(vcf_scout_output)
         vcf_handle.write(vcf_content)
 
         vcf_path = vcf_handle.name
