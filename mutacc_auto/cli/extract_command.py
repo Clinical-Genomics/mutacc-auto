@@ -60,6 +60,10 @@ def extract_command(ctx,
 
             if verbose:
 
+                with open(case_input['input_file']) as input_handle:
+
+                    LOG.info("\n{}".format(input_handle.read()))
+
                 with open(sbatch_script) as sbatch_handle:
 
                     LOG.info("\n{}".format(sbatch_handle.read()))
