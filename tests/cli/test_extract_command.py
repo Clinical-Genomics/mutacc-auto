@@ -7,7 +7,7 @@ from click.testing import CliRunner
 
 from mutacc_auto.cli.root import cli
 
-INPUTS_LIST = [{'input_file': 'path_to_file', 'padding':600}]*2
+INPUTS_LIST = [{'input_file': 'tests/fixtures/case_input.yaml', 'padding':600}]*2
 SBATCH_TEMPLATE = "tests/fixtures/sbatch_template.txt"
 
 @patch('mutacc_auto.cli.extract_command.get_inputs')
