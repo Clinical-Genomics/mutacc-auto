@@ -41,11 +41,11 @@ def get_bams(case_id, hk_config=None):
             bam_paths (dict): dict with paths to bam for each sample
     """
 
-    #housekeeper_command = HousekeeperCommand(case_id=case_id, config_file=hk_config)
-    #hk_output = housekeeper_command.check_output()
+    housekeeper_command = HousekeeperCommand(case_id=case_id, config_file=hk_config)
+    hk_output = housekeeper_command.check_output()
     ###
-    hk_out = subprocess.check_output(['cat', '/Users/adam.rosenbaum/develop/mutacc_auto/tests/fixtures/HK_output_test.txt'])
-    hk_output = hk_out.decode('utf-8')
+    #hk_out = subprocess.check_output(['cat', '/Users/adam.rosenbaum/develop/mutacc_auto/tests/fixtures/HK_output_test.txt'])
+    #hk_output = hk_out.decode('utf-8')
     ###
     bam_paths = get_bams_from_housekeeper(hk_output)
 
