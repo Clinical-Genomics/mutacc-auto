@@ -45,6 +45,14 @@ help="verbose")
 @click.option('-k', '--conda',
 is_flag=True,
 help="Use 'conda activate' to source environment")
+@click.option('--scout-config',
+type=click.Path(exists=True),
+help="configuration file used for scout"
+)
+@click.option('--hk-config',
+type=click.Path(exists=True),
+help="configuration file used for housekeeper"
+)
 @click.pass_context
 def extract_command(ctx,
                     case_id,
@@ -56,7 +64,9 @@ def extract_command(ctx,
                     padding,
                     dry,
                     verbose,
-                    conda):
+                    conda,
+                    scout_config,
+                    hk_config):
 
     #Create a temporary dir to store created vcf, yaml, and script files
     with TemporaryDirectory() as tmp_dir:
@@ -64,7 +74,9 @@ def extract_command(ctx,
         LOG.info("All files are placed in {}".format(tmp_dir))
 
         #Prepare input for case with case_id or days since updated
-        inputs = get_inputs(tmp_dir, case_id=case_id, days_ago=days_ago, padding = padding)
+        inputs = get_inputs(tmp_dir, case_id=case_id, days_ago=days_ago,
+                            padding = padding, scout_config=scout_config,
+                            hk_config=hk_config)
 
         for case_input in inputs:
             #Extract reads for every case
