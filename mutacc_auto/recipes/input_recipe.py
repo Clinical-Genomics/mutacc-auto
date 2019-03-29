@@ -11,7 +11,7 @@ from mutacc_auto.build_input.input_assemble import get_case
 
 PADDING = 600
 
-def get_cases(case_id = None, days_ago = None):
+def get_cases(case_id = None, days_ago = None, scout_config=None):
 
     """
         Get cases from scout
@@ -23,13 +23,13 @@ def get_cases(case_id = None, days_ago = None):
         Returns:
             cases (list(dict)): list of cases represented as dictionaries
     """
-    scout_case_command = ScoutExportCases(case_id = case_id)
+    scout_case_command = ScoutExportCases(case_id = case_id, config_file=scout_config)
     scout_output = scout_case_command.check_output()
     cases = get_cases_from_scout(scout_output, days_ago)
 
     return cases
 
-def get_bams(case_id):
+def get_bams(case_id, hk_config=None):
 
     """
         Get bam files from housekeeper
@@ -41,17 +41,17 @@ def get_bams(case_id):
             bam_paths (dict): dict with paths to bam for each sample
     """
 
-    housekeeper_command = HousekeeperCommand(case_id=case_id)
-    hk_output = housekeeper_command.check_output()
+    #housekeeper_command = HousekeeperCommand(case_id=case_id, config_file=hk_config)
+    #hk_output = housekeeper_command.check_output()
     ###
-    #hk_out = subprocess.check_output(['cat', '/Users/adam.rosenbaum/develop/mutacc_auto/tests/fixtures/HK_output_test.txt'])
-    #hk_output = hk_out.decode('utf-8')
+    hk_out = subprocess.check_output(['cat', '/Users/adam.rosenbaum/develop/mutacc_auto/tests/fixtures/HK_output_test.txt'])
+    hk_output = hk_out.decode('utf-8')
     ###
     bam_paths = get_bams_from_housekeeper(hk_output)
 
     return bam_paths
 
-def write_vcf(case_id, directory):
+def write_vcf(case_id, directory, scout_config=None):
 
     """
         Writes vcf file from scout output
@@ -65,7 +65,7 @@ def write_vcf(case_id, directory):
         'w'
         ) as vcf_handle:
 
-        vcf_command = ScoutExportCausativeVariants(case_id)
+        vcf_command = ScoutExportCausativeVariants(case_id, config_file=scout_config)
         vcf_scout_output = vcf_command.check_output()
         vcf_content = get_vcf_from_json(vcf_scout_output)
         vcf_handle.write(vcf_content)
@@ -113,7 +113,8 @@ def get_analysis_type(case):
 
     return analysis_type
 
-def get_inputs(tmp_dir ,case_id = None, days_ago = None, padding = None):
+def get_inputs(tmp_dir ,case_id = None, days_ago = None, padding = None,
+    scout_config=None, hk_config=None):
 
     """
         Get input data for each case
@@ -128,7 +129,7 @@ def get_inputs(tmp_dir ,case_id = None, days_ago = None, padding = None):
             inputs (list(dict)): List of dictionaries with path to input file,
                                  and padding for each case
     """
-    cases = get_cases(case_id, days_ago)
+    cases = get_cases(case_id, days_ago, scout_config=scout_config)
 
     inputs = []
 
@@ -138,9 +139,9 @@ def get_inputs(tmp_dir ,case_id = None, days_ago = None, padding = None):
 
         case_id = case['display_name']
 
-        bam_paths = get_bams(case_id)
+        bam_paths = get_bams(case_id, hk_config=hk_config)
 
-        vcf_path = write_vcf(case_id, tmp_dir)
+        vcf_path = write_vcf(case_id, tmp_dir, scout_config=scout_config)
 
         case_dict = get_case(case, bam_paths, vcf_path)
 

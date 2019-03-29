@@ -14,9 +14,13 @@ class ScoutCommand(BaseCommand):
 
 class ScoutExportCases(ScoutCommand):
 
-    def __init__(self, case_id=None):
+    def __init__(self, case_id=None, config_file=None):
 
         super(ScoutExportCases, self).__init__()
+
+        if config_file:
+
+            self.add_option('config', value=str(config_file))
 
         self.add_subcommand('export')
         self.add_subcommand('cases')
@@ -29,9 +33,13 @@ class ScoutExportCases(ScoutCommand):
 
 class ScoutExportCausativeVariants(ScoutCommand):
 
-    def __init__(self, case_id, json_output = True):
+    def __init__(self, case_id, json_output = True, config_file=None):
 
         super(ScoutExportCausativeVariants, self).__init__()
+
+        if config_file:
+
+            self.add_option('config', value=str(config_file))
 
         self.add_subcommand('export')
         self.add_subcommand('variants')

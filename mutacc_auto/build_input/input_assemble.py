@@ -72,7 +72,7 @@ def assemble_samples(individuals, bam_files = None):
     for individual in individuals:
         samples.append(
             {
-                'sampe_id': individual['individual_id'],
+                'sample_id': individual['individual_id'],
                 'sex': 'male' if (individual['sex'] == '1') else 'female',
                 'phenotype': 'affected' if (individual['phenotype'] == 2) else 'unaffected',
                 'father': individual['father'],
