@@ -13,16 +13,38 @@ from mutacc_auto.recipes.extract_recipe import run_mutacc_extract
 LOG = logging.getLogger(__name__)
 
 @click.command('extract')
-@click.option('-c','--case-id', type=str)
-@click.option('-d','--days-ago', type=int)
-@click.option('-e','--environment', type=str)
-@click.option('-C','--config-file', type=click.Path(exists=True))
-@click.option('-L', '--log-directory', type=click.Path(exists=True))
-@click.option('-E', '--email', type=str)
-@click.option('-p','--padding', type=int)
-@click.option('-D','--dry', is_flag=True)
-@click.option('-V','--verbose', is_flag=True)
-@click.option('-k', '--conda', is_flag=True)
+@click.option('-c','--case-id',
+type=str,
+help="case id used in scout and housekeeper")
+@click.option('-d','--days-ago',
+type=int,
+help="days since last update of case")
+@click.option('-e','--environment',
+type=str,
+help="conda environment used for mutacc"
+)
+@click.option('-C','--config-file',
+type=click.Path(exists=True),
+help="configuration file used for mutacc"
+)
+@click.option('-L', '--log-directory',
+type=click.Path(exists=True),
+help="Directory for slurm logs")
+@click.option('-E', '--email',
+type=str,
+help="email to notify")
+@click.option('-p','--padding',
+type=int,
+help="padding for genomic regions. this defaults to 0 for WES cases")
+@click.option('-D','--dry',
+is_flag=True,
+help="dry run")
+@click.option('-V','--verbose',
+is_flag=True,
+help="verbose")
+@click.option('-k', '--conda',
+is_flag=True,
+help="Use 'conda activate' to source environment")
 @click.pass_context
 def extract_command(ctx,
                     case_id,
@@ -59,6 +81,10 @@ def extract_command(ctx,
                 )
 
             if verbose:
+
+                with open(case_input['input_file']) as input_handle:
+
+                    LOG.info("\n{}".format(input_handle.read()))
 
                 with open(sbatch_script) as sbatch_handle:
 

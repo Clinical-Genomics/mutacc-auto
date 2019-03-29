@@ -14,9 +14,15 @@ MUTACC_ROOT_DIR = 'root_dir'
 LOG = logging.getLogger(__name__)
 
 @click.command('import')
-@click.option('-C','--config-file', type=click.Path(exists=True))
-@click.option('-D','--dry', is_flag=True)
-@click.option('-V','--verbose', is_flag=True)
+@click.option('-C','--config-file',
+type=click.Path(exists=True),
+help="configuration file used for mutacc")
+@click.option('-D','--dry',
+is_flag=True,
+help="dry run")
+@click.option('-V','--verbose',
+is_flag=True,
+help="verbose")
 @click.pass_context
 def import_command(ctx,
                    config_file,
