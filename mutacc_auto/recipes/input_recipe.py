@@ -137,7 +137,8 @@ def get_inputs(tmp_dir ,case_id = None, days_ago = None, padding = None,
 
         input_dict = {}
 
-        case_id = case['display_name']
+        #case_id = case['display_name']
+        case_id = case['_id']
 
         bam_paths = get_bams(case_id, hk_config=hk_config)
 
