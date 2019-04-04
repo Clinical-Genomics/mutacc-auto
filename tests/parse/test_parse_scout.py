@@ -1,6 +1,8 @@
 import pytest
+from copy import deepcopy
+import json
 
-from mutacc_auto.parse.parse_scout import *
+from mutacc_auto.parse.parse_scout import (get_cases_from_scout, NoCausativesException)
 
 def test_get_cases_from_scout(scout_output):
 
@@ -19,3 +21,13 @@ def test_get_cases_from_scout(scout_output):
 
     len(cases) == 0
     type(cases) == list
+
+    #Remove 'causatives from scout output'
+    no_causatives = json.loads(scout_output)
+    for case in no_causatives:
+        case.pop('causatives')
+    no_causatives=json.dumps(no_causatives)
+
+    with pytest.raises(NoCausativesException):
+
+        cases = get_cases_from_scout(no_causatives)

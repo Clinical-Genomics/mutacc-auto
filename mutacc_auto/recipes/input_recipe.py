@@ -1,15 +1,18 @@
 import yaml
 from pathlib import Path
 import subprocess
+import logging
 
 from mutacc_auto.utils.tmp_dir import TemporaryDirectory
 from mutacc_auto.commands.scout_command import ScoutExportCases, ScoutExportCausativeVariants
 from mutacc_auto.commands.housekeeper_command import HousekeeperCommand
 from mutacc_auto.parse.parse_scout import get_cases_from_scout, get_vcf_from_json
 from mutacc_auto.parse.parse_housekeeper import get_bams_from_housekeeper
-from mutacc_auto.build_input.input_assemble import get_case
+from mutacc_auto.build_input.input_assemble import (get_case, NoBamException)
 
 PADDING = 600
+
+LOG = logging.getLogger(__name__)
 
 def get_cases(case_id = None, days_ago = None, scout_config=None):
 
@@ -41,11 +44,11 @@ def get_bams(case_id, hk_config=None):
             bam_paths (dict): dict with paths to bam for each sample
     """
 
-    housekeeper_command = HousekeeperCommand(case_id=case_id, config_file=hk_config)
-    hk_output = housekeeper_command.check_output()
+    #housekeeper_command = HousekeeperCommand(case_id=case_id, config_file=hk_config)
+    #hk_output = housekeeper_command.check_output()
     ###
-    #hk_out = subprocess.check_output(['cat', '/Users/adam.rosenbaum/develop/mutacc_auto/tests/fixtures/HK_output_test.txt'])
-    #hk_output = hk_out.decode('utf-8')
+    hk_out = subprocess.check_output(['cat', '/Users/adam.rosenbaum/develop/mutacc_auto/tests/fixtures/HK_output_test.txt'])
+    hk_output = hk_out.decode('utf-8')
     ###
     bam_paths = get_bams_from_housekeeper(hk_output)
 
@@ -144,7 +147,11 @@ def get_inputs(tmp_dir ,case_id = None, days_ago = None, padding = None,
 
         vcf_path = write_vcf(case_id, tmp_dir, scout_config=scout_config)
 
-        case_dict = get_case(case, bam_paths, vcf_path)
+        try:
+            case_dict = get_case(case, bam_paths, vcf_path)
+        except NoBamException:
+            LOG.warning(f"Missing bam files for case {case['_id']}")
+            continue
 
         input_path = write_input(case_dict, tmp_dir)
 
