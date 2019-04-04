@@ -1,8 +1,11 @@
 
 import subprocess
 import logging
+import time
 
 LOG = logging.getLogger(__name__)
+
+SECONDS_BETWEEN_CALLS = 0.5
 
 class Command():
 
@@ -54,7 +57,7 @@ class Command():
         """
             Returns the stdout of the command
         """
-
+        time.sleep(SECONDS_BETWEEN_CALLS)
         try:
 
             command_stdout = subprocess.check_output(self.command)
@@ -79,7 +82,7 @@ class Command():
         """
             Calls the command
         """
-
+        time.sleep(SECONDS_BETWEEN_CALLS)
         try:
 
             result = subprocess.check_call(self.command)

@@ -13,9 +13,16 @@ MUTACC_ROOT_DIR = 'root_dir'
 
 LOG = logging.getLogger(__name__)
 
+def parse_path(ctx, param, value):
+
+    if value:
+        value = str(Path(str(value)).expanduser().absolute().resolve())
+    return value
+
 @click.command('import')
 @click.option('-C','--config-file',
 type=click.Path(exists=True),
+callback=parse_path,
 help="configuration file used for mutacc")
 @click.option('-D','--dry',
 is_flag=True,
