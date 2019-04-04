@@ -5,12 +5,20 @@ from pathlib import Path
 import yaml
 import sys
 import os
+from pathlib import Path
 
 from mutacc_auto.utils.tmp_dir import TemporaryDirectory
 from mutacc_auto.recipes.input_recipe import get_inputs
 from mutacc_auto.recipes.extract_recipe import run_mutacc_extract
 
 LOG = logging.getLogger(__name__)
+
+
+def parse_path(ctx, param, value):
+
+    if value:
+        value = str(Path(str(value)).expanduser().absolute().resolve())
+    return value
 
 @click.command('extract')
 @click.option('-c','--case-id',
@@ -25,10 +33,12 @@ help="conda environment used for mutacc"
 )
 @click.option('-C','--config-file',
 type=click.Path(exists=True),
+callback=parse_path,
 help="configuration file used for mutacc"
 )
 @click.option('-L', '--log-directory',
 type=click.Path(exists=True),
+callback=parse_path,
 help="Directory for slurm logs")
 @click.option('-E', '--email',
 type=str,
@@ -47,10 +57,12 @@ is_flag=True,
 help="Use 'conda activate' to source environment")
 @click.option('--scout-config',
 type=click.Path(exists=True),
+callback=parse_path,
 help="configuration file used for scout"
 )
 @click.option('--hk-config',
 type=click.Path(exists=True),
+callback=parse_path,
 help="configuration file used for housekeeper"
 )
 @click.pass_context
