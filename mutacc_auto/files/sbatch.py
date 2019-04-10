@@ -4,7 +4,17 @@ import logging
 from pathlib import Path
 import tempfile
 
-from mutacc_auto.files.constants import *
+from mutacc_auto.files.constants import (
+    SHEBANG,
+    HEADER_PREFIX,
+    JOBNAME,
+    HEADER_OPTIONS,
+    SOURCE_ACTIVATE,
+    CONDA_ACTIVATE,
+    STDERR_SUFFIX,
+    STDOUT_SUFFIX,
+    NEWLINE,
+)
 
 LOG = logging.getLogger(__name__)
 
@@ -15,7 +25,7 @@ class SbatchScript():
     """
 
     @staticmethod
-    def get_header(log_directory, email=None):
+    def get_header(slurm_options, log_directory, email=None):
 
         """
             Returns header to be printed in sbatch scripts
@@ -30,15 +40,24 @@ class SbatchScript():
 
         #Instantiate header string
         header = ""
-        #write all constant header options
-        for option in HEADER_OPTIONS:
-            if len(option[0]) == 1:
-                header += f"{HEADER_PREFIX} -{option[0]} {option[1]}{NEWLINE}"
-            else:
-                header += f"{HEADER_PREFIX} --{option[0]}={option[1]}{NEWLINE}"
 
-        #make log files
-        log_directory = Path(log_directory)
+        #Find what options are given through command line
+        cli_options = list(slurm_options.keys())
+        #write all constant header options
+        for key, value in HEADER_OPTIONS.items():
+
+            #if option name not given through CLI, use dedault
+            option_value = value[1]
+            if key in cli_options:
+                option_value = slurm_options[key]
+
+            if len(value[0]) == 1:
+                header += f"{HEADER_PREFIX} -{value[0]} {option_value}{NEWLINE}"
+            else:
+                header += f"{HEADER_PREFIX} --{value[0]}={option_value}{NEWLINE}"
+
+        #make name of log files
+        log_directory = Path(slurm_options['log_directory'])
 
         #Include Jobname in log file names
         stderr_file = log_directory.joinpath(f"{JOBNAME}.{STDERR_SUFFIX}")
@@ -49,8 +68,8 @@ class SbatchScript():
         header += f"{HEADER_PREFIX} -o {stdout_file}{NEWLINE}"
 
         #If email is given, include this in header
-        if email:
-            header += f"{HEADER_PREFIX} --mail-user={email}{NEWLINE}"
+        if slurm_options.get('email'):
+            header += f"{HEADER_PREFIX} --mail-user={slurm_options['email']}{NEWLINE}"
 
         return header
 
@@ -77,7 +96,7 @@ class SbatchScript():
         return SHEBANG
 
 
-    def __init__(self, job_directory, environment, log_directory, email=None, conda=False):
+    def __init__(self, job_directory, environment, slurm_options, log_directory, email=None, conda=False):
 
         """
             Args:
@@ -93,7 +112,7 @@ class SbatchScript():
                                         delete = False
                                         )
         self.shebang = self.get_shebang()
-        self.header = self.get_header(log_directory, email=email)
+        self.header = self.get_header(slurm_options, log_directory, email=email)
         self.environment = self.get_environment(environment, conda)
 
         #Write sections in script

@@ -6,10 +6,12 @@ BASE_COMMAND = "housekeeper"
 #Inherit from BaseCommand
 class HousekeeperCommand(BaseCommand):
 
-    def __init__(self, case_id, config_file=None):
+    def __init__(self, case_id, config_file=None, hk_binary=None):
 
         super(HousekeeperCommand, self).__init__(BASE_COMMAND)
 
+        if hk_binary:
+            self.command = [hk_binary]
         if config_file:
 
             self.add_option('config', value=str(config_file))

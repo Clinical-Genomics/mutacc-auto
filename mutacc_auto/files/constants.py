@@ -17,16 +17,16 @@ MAIL_FAIL = 'FAIL'
 MAIL_END = 'END'
 
 #SOME DEFAULT SBATCH OPTIONS
-# (OPTION, VALUE)
-HEADER_OPTIONS = (
-    ('A', ACCOUNT),
-    ('n', NODES),
-    ('t', TIME),
-    ('J', JOBNAME),
-    ('qos', PRIORITY),
-    ('mail-type', MAIL_FAIL),
-    ('mail-type', MAIL_END)
-)
+# OPTION_NAME: (OPTION, VALUE)
+HEADER_OPTIONS = {
+    'account': ('A', ACCOUNT),
+    'nodes': ('n', NODES),
+    'time': ('t', TIME),
+    'jobname': ('J', JOBNAME),
+    'priority': ('qos', PRIORITY),
+    'mail_fail': ('mail-type', MAIL_FAIL),
+    'mail_end': ('mail-type', MAIL_END)
+}
 
 SOURCE_ACTIVATE = "source activate"
 CONDA_ACTIVATE = "conda activate"

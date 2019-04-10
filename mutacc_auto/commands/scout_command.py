@@ -14,9 +14,12 @@ class ScoutCommand(BaseCommand):
 
 class ScoutExportCases(ScoutCommand):
 
-    def __init__(self, case_id=None, config_file=None):
+    def __init__(self, case_id=None, config_file=None, scout_binary=None):
 
         super(ScoutExportCases, self).__init__()
+
+        if scout_binary:
+            self.command = [scout_binary]
 
         if config_file:
 
@@ -33,9 +36,12 @@ class ScoutExportCases(ScoutCommand):
 
 class ScoutExportCausativeVariants(ScoutCommand):
 
-    def __init__(self, case_id, json_output = True, config_file=None):
+    def __init__(self, case_id, json_output = True, config_file=None, scout_binary=None):
 
         super(ScoutExportCausativeVariants, self).__init__()
+        
+        if scout_binary:
+            self.command = [scout_binary]
 
         if config_file:
 
