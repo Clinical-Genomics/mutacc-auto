@@ -13,14 +13,13 @@ def test_write_sbatch_script(tmpdir):
     sbatch_path = write_sbatch_script(tmp_dir,
                                       'environment',
                                       'mutacc extract ...',
-                                      tmp_dir,
-                                      'email')
+                                      {'log_directory': tmp_dir, 'email': 'email'})
 
     assert os.path.isfile(sbatch_path)
 
 def test_get_mutacc_extract_command():
 
-    mutacc_extract_command = MutAccExract('mutacc_conf', 699, 'input_file')
+    mutacc_extract_command = MutaccExtract('mutacc_conf', 699, 'input_file')
     true_command = "mutacc --config-file mutacc_conf extract --padding 699 --case input_file"
     assert str(mutacc_extract_command) == true_command
 
@@ -41,6 +40,5 @@ def test_run_mutacc_extract(mock_sbatch_run, tmpdir):
         'input_file',
         123,
         'env',
-        tmp_dir,
-        'email',
+        {'log_directory': tmp_dir, 'email': 'email'},
     )

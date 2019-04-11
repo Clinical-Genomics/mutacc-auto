@@ -111,12 +111,16 @@ def extract_command(ctx,
     mutacc_config = mutacc_config or ctx.obj.get('mutacc_config')
     mutacc_binary = ctx.obj.get('mutacc_binary')
 
+    slurm_config = {}
+    if ctx.obj.get('slurm'):
+        slurm_config = ctx.obj['slurm']
+
     slurm_options = {}
-    slurm_options['log_directory'] = log_directory or ctx.obj['slurm'].get('log_directory')
-    slurm_options['email'] = email or ctx.obj['slurm'].get('email')
-    slurm_options['time'] = time or ctx.obj['slurm'].get('time')
-    slurm_options['account'] = account or ctx.obj['slurm'].get('account')
-    slurm_options['priority'] = priority or ctx.obj['slurm'].get('priority')
+    slurm_options['log_directory'] = log_directory or slurm_config.get('log_directory')
+    slurm_options['email'] = email or slurm_config.get('email')
+    slurm_options['time'] = time or slurm_config.get('time')
+    slurm_options['account'] = account or slurm_config.get('account')
+    slurm_options['priority'] = priority or slurm_config.get('priority')
 
 
 
@@ -140,8 +144,6 @@ def extract_command(ctx,
                     case_input['padding'],
                     environment,
                     slurm_options,
-                    log_directory,
-                    email=email,
                     conda=conda,
                     dry=dry,
                     mutacc_binary=mutacc_binary
@@ -156,7 +158,7 @@ def extract_command(ctx,
                 with open(case_input['input_file']) as input_handle:
 
                     LOG.info("INPUT FILE {}\n{}".format(case_input['input_file'],input_handle.read()))
-                    
+
 
                 with open(case_input['input_file']) as input_handle:
                     input_file = yaml.load(input_handle)

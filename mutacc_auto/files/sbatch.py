@@ -25,7 +25,7 @@ class SbatchScript():
     """
 
     @staticmethod
-    def get_header(slurm_options, log_directory, email=None):
+    def get_header(slurm_options):
 
         """
             Returns header to be printed in sbatch scripts
@@ -96,7 +96,7 @@ class SbatchScript():
         return SHEBANG
 
 
-    def __init__(self, job_directory, environment, slurm_options, log_directory, email=None, conda=False):
+    def __init__(self, job_directory, environment, slurm_options, conda=False):
 
         """
             Args:
@@ -112,7 +112,7 @@ class SbatchScript():
                                         delete = False
                                         )
         self.shebang = self.get_shebang()
-        self.header = self.get_header(slurm_options, log_directory, email=email)
+        self.header = self.get_header(slurm_options)
         self.environment = self.get_environment(environment, conda)
 
         #Write sections in script

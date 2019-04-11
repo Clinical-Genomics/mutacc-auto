@@ -12,8 +12,7 @@ def test_SbatchScript(tmpdir):
 
     with SbatchScript(tmp_dir,
                       'mutacc_env',
-                      tmp_dir,
-                      'email') as sbatch_script:
+                      {'log_directory': tmp_dir, 'email':'email'}) as sbatch_script:
 
         sbatch_script.write_section('Command to run')
 
@@ -23,7 +22,7 @@ def test_SbatchScript(tmpdir):
 
     with SbatchScript(tmp_dir,
                      'mutacc_env',
-                      tmp_dir,
+                      {'log_directory': tmp_dir, 'email':'email', 'account':'account'},
                       conda=True) as sbatch_script:
 
         sbatch_script.write_section('Command to run')
@@ -31,8 +30,3 @@ def test_SbatchScript(tmpdir):
     sbatch_path = sbatch_script.path
 
     assert Path(sbatch_path).exists()
-
-
-def test_get_timestamp():
-
-    assert type(get_timestamp()) == str

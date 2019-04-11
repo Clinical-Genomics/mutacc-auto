@@ -93,9 +93,9 @@ def test_get_inputs(mock_write_vcf, mock_get_bams, mock_get_cases, tmpdir, scout
 
     inputs = get_inputs(tmp_dir, days_ago = 1234)
 
-    mock_get_cases.assert_called_with(None,1234, scout_config=None)
-    mock_get_bams.assert_called_with('643594', hk_config=None)
-    mock_write_vcf.assert_called_with('643594', tmp_dir, scout_config=None)
+    mock_get_cases.assert_called_with(None,1234, scout_config=None, scout_binary=None)
+    mock_get_bams.assert_called_with('643594', hk_config=None, hk_binary=None)
+    mock_write_vcf.assert_called_with('643594', tmp_dir, scout_config=None, scout_binary=None)
 
     assert len(inputs) == 2
 

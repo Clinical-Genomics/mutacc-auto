@@ -37,4 +37,4 @@ samples:
 
 #variant:
 #'variant_id', 'chromosome', 'position', 'alt', 'ref' must be given.
-variants: 'tests/fixtures/vcf_test.vcf'
+variants: 'tests/fixtures/test_vcf.vcf'

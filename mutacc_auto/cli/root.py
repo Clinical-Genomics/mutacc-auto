@@ -27,6 +27,7 @@ def cli(ctx, loglevel, config_file):
     coloredlogs.install(level = loglevel)
     LOG.info("Running mutacc_auto")
 
+    config = {}
     if config_file:
         with open(config_file, 'r') as in_handle:
             config = yaml.load(in_handle)

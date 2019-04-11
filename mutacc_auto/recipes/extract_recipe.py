@@ -1,6 +1,6 @@
 import logging
 
-from mutacc_auto.commands.mutacc_command import MutAccExract
+from mutacc_auto.commands.mutacc_command import MutaccExtract
 from mutacc_auto.commands.sbatch_command import SbatchCommand
 from mutacc_auto.files.sbatch import SbatchScript
 
@@ -10,8 +10,6 @@ def write_sbatch_script(tmp_dir,
                         environment,
                         mutacc_extract_command,
                         slurm_options,
-                        log_directory,
-                        email,
                         conda=False):
 
     """
@@ -33,8 +31,6 @@ def write_sbatch_script(tmp_dir,
             tmp_dir,
             environment,
             slurm_options,
-            log_directory,
-            email=email,
             conda=conda
         ) as sbatch_handle:
 
@@ -59,7 +55,7 @@ def get_mutacc_extract_command(mutacc_conf, input_file, padding, mutacc_binary=N
             mutacc_extract_command (str): mutacc command to be run for extraction
     """
 
-    mutacc_extract_command = MutAccExract(mutacc_conf, padding, input_file, mutacc_binary=mutacc_binary)
+    mutacc_extract_command = MutaccExtract(mutacc_conf, padding, input_file, mutacc_binary=mutacc_binary)
 
     return str(mutacc_extract_command)
 
@@ -86,8 +82,6 @@ def run_mutacc_extract(tmp_dir,
                        padding,
                        environment,
                        slurm_options,
-                       log_directory,
-                       email,
                        conda=False,
                        wait=False,
                        dry=False,
@@ -105,8 +99,6 @@ def run_mutacc_extract(tmp_dir,
                                              environment,
                                              mutacc_extract_command,
                                              slurm_options,
-                                             log_directory,
-                                             email,
                                              conda)
 
 
