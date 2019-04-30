@@ -5,6 +5,7 @@ import yaml
 HK_OUT_FILE = "tests/fixtures/HK_output_test.txt"
 SCOUT_OUT_FILE = "tests/fixtures/scout_output.json"
 CASE_YAML = "tests/fixtures/case_input.yaml"
+CONFIG = "tests/fixtures/config_file.yaml"
 
 @pytest.fixture
 def housekeeper_output():
@@ -41,3 +42,8 @@ def scout_output():
         case = case_handle.read()
 
     return case
+    
+@pytest.fixture
+def configuration_file():
+
+    return CONFIG

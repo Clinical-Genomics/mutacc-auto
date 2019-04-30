@@ -15,6 +15,7 @@ SBATCH_TEMPLATE = "tests/fixtures/sbatch_template.txt"
 def test_extract_command(
         mock_extract,
         mock_inputs,
+        configuration_file,
         tmpdir
     ):
 
@@ -33,10 +34,11 @@ def test_extract_command(
 
     runner = CliRunner()
     result = runner.invoke(cli, [
+            '--config-file', configuration_file,
             'extract',
             '--case-id', 'test_id',
             '--environment', 'env',
-            '--config-file', conf_path,
+            '--mutacc-config', conf_path,
             '--log-directory', str(tmp_dir),
             '--email', 'email@email.com',
             '--dry',
@@ -50,7 +52,7 @@ def test_extract_command(
             'extract',
             '--days-ago', '300',
             '--environment', 'env',
-            '--config-file', conf_path,
+            '--mutacc-config', conf_path,
             '--log-directory', tmp_dir
         ]
     )

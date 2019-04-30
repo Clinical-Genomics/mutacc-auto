@@ -1,0 +1,14 @@
+---
+scout_config: /path/to/scout_config
+scout_binary: /path/to/scout
+housekeeper_config: /path/to/housekeeper_config
+housekeeper_binary: /path/to/housekeeper
+mutacc_config: /path/to/mutacc_config
+mutacc_binary: /path/to/mutacc
+
+slurm:
+        log_directory: /path/to/log/
+        email: 'email.email@email.com'
+        time: '2:00:00'
+        account: 'account'
+        priority: 'low'
