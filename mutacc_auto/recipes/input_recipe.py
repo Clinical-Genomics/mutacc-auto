@@ -6,7 +6,8 @@ import logging
 from mutacc_auto.utils.tmp_dir import TemporaryDirectory
 from mutacc_auto.commands.scout_command import ScoutExportCases, ScoutExportCausativeVariants
 from mutacc_auto.commands.housekeeper_command import HousekeeperCommand
-from mutacc_auto.parse.parse_scout import get_cases_from_scout, get_vcf_from_json
+from mutacc_auto.parse.parse_scout import get_cases_from_scout
+from mutacc_auto.parse.parse_variant import get_vcf_from_json
 from mutacc_auto.parse.parse_housekeeper import get_bams_from_housekeeper
 from mutacc_auto.build_input.input_assemble import (get_case, NoBamException)
 
