@@ -14,6 +14,14 @@ SCOUT_TO_INFO = {
     'rank_score': 'RankScore'
 }
 
+
+SCOUT_GENE = 'genes'
+GENE_INFO = ('region_annotation',
+             'functional_annotation',
+             'sift_prediction',
+             'polyphen_prediction')
+ANNOTATION = 'ANN'
+
 HEADER = (
 
     '##fileformat=VCFv4.2',
@@ -22,7 +30,7 @@ HEADER = (
     '##INFO=<ID=SVTYPE,Number=1,Type=String,Description="Type of structural variant">',
     '##INFO=<ID=TYPE,Number=A,Type=String,Description="The type of allele, either snp, mnp, ins, del, or complex.">',
     '##INFO=<ID=RankScore,Number=.,Type=String,Description="The rank score for this variant in this family. family_id:rank_score.">',
-
+    f'##INFO=<ID=ANN,Number=.,Type=String,Description="Annotation: {"|".join(GENE_INFO)}">',
 
     '##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">',
     '##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Approximate read depth (reads with MQ=255 or with bad mates are filtered)">',

@@ -6,7 +6,8 @@ import logging
 from mutacc_auto.utils.tmp_dir import TemporaryDirectory
 from mutacc_auto.commands.scout_command import ScoutExportCases, ScoutExportCausativeVariants
 from mutacc_auto.commands.housekeeper_command import HousekeeperCommand
-from mutacc_auto.parse.parse_scout import get_cases_from_scout, get_vcf_from_json
+from mutacc_auto.parse.parse_scout import get_cases_from_scout
+from mutacc_auto.parse.parse_variant import get_vcf_from_json
 from mutacc_auto.parse.parse_housekeeper import get_bams_from_housekeeper
 from mutacc_auto.build_input.input_assemble import (get_case, NoBamException)
 
@@ -48,15 +49,15 @@ def get_bams(case_id, hk_config=None, hk_binary=None):
             bam_paths (dict): dict with paths to bam for each sample
     """
 
-    housekeeper_command = HousekeeperCommand(
-        case_id=case_id,
-        config_file=hk_config,
-        hk_binary=hk_binary
-    )
-    hk_output = housekeeper_command.check_output()
+    #housekeeper_command = HousekeeperCommand(
+    #    case_id=case_id,
+    #    config_file=hk_config,
+    #    hk_binary=hk_binary
+    #)
+    #hk_output = housekeeper_command.check_output()
     ###
-    #hk_out = subprocess.check_output(['cat', '/Users/adam.rosenbaum/develop/mutacc_auto/tests/fixtures/HK_output_test.txt'])
-    #hk_output = hk_out.decode('utf-8')
+    hk_out = subprocess.check_output(['cat', '/Users/adam.rosenbaum/develop/mutacc_auto/tests/fixtures/HK_output_test.txt'])
+    hk_output = hk_out.decode('utf-8')
     ###
     bam_paths = get_bams_from_housekeeper(hk_output)
 
