@@ -25,7 +25,7 @@ def test_extract_command(
 
     with open(tmp_dir.joinpath('tmp_conf.yaml'), 'w') as conf_handle:
 
-        conf_dict = {'case_dir': str(tmp_dir)}
+        conf_dict = {'case_dir': str(tmp_dir), 'root_dir': str(tmp_dir)}
         yaml.dump(conf_dict, conf_handle)
         conf_path = conf_handle.name
 
@@ -33,19 +33,16 @@ def test_extract_command(
         handle.write('\n')
 
     runner = CliRunner()
-    result = runner.invoke(cli, [
-            '--config-file', configuration_file,
-            'extract',
-            '--case-id', 'test_id',
-            '--environment', 'env',
-            '--mutacc-config', conf_path,
-            '--log-directory', str(tmp_dir),
-            '--email', 'email@email.com',
-            '--dry',
-            '--verbose'
-        ]
-    )
-
+    result = runner.invoke(cli, ['--config-file', configuration_file,
+                                 'extract',
+                                 '--case-id', 'test_id',
+                                 '--environment', 'env',
+                                 '--mutacc-config', conf_path,
+                                 '--log-directory', str(tmp_dir),
+                                 '--email', 'email@email.com',
+                                 '--dry',
+                                 '--verbose'])
+    #mock_mkdir.assert_called_with('dsa')
     assert result.exit_code == 0
 
     result = runner.invoke(cli, [

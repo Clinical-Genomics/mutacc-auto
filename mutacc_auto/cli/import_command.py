@@ -20,18 +20,23 @@ def parse_path(ctx, param, value):
     return value
 
 @click.command('import')
+@click.option('-C','--config-file',
+              type=click.Path(exists=True),
+              callback=parse_path,
+              help="configuration file used for mutacc")
 @click.option('-D','--dry',
-is_flag=True,
-help="dry run")
+              is_flag=True,
+              help="dry run")
 @click.option('-V','--verbose',
-is_flag=True,
-help="verbose")
+              is_flag=True,
+              help="verbose")
 @click.pass_context
 def import_command(ctx,
+                   config_file,
                    dry,
                    verbose):
 
-    mutacc_config = ctx.obj['mutacc_config']
+    mutacc_config = ctx.obj.get('mutacc_config') or config_file
     #Open and read config for mutacc
     with open(Path(mutacc_config)) as yaml_handle:
 
