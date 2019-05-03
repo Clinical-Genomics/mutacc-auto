@@ -106,11 +106,11 @@ class SbatchScript():
                 email (str): email to notify
         """
 
-        self.script_handle = tempfile.NamedTemporaryFile(
-                                        mode = 'w',
-                                        dir = job_directory,
-                                        delete = False
-                                        )
+        self.script_handle = tempfile.NamedTemporaryFile(suffix='.sh',
+                                                         prefix='sbatch_',
+                                                         mode='w',
+                                                         dir=job_directory,
+                                                         delete=False)
         self.shebang = self.get_shebang()
         self.header = self.get_header(slurm_options)
         self.environment = self.get_environment(environment, conda)

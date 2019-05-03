@@ -13,6 +13,8 @@ from mutacc_auto.recipes.extract_recipe import run_mutacc_extract
 
 LOG = logging.getLogger(__name__)
 
+MUTACC_TMP = 'temporaries'
+MUTACC_ROOT_DIR = 'root_dir'
 
 def parse_path(ctx, param, value):
 
@@ -23,67 +25,53 @@ def parse_path(ctx, param, value):
 @click.command('extract')
 @click.option('-c','--case-id',
     type=str,
-    help="case id used in scout and housekeeper"
-)
+    help="case id used in scout and housekeeper")
 @click.option('-d','--days-ago',
     type=int,
-    help="days since last update of case"
-)
+    help="days since last update of case")
 @click.option('-e','--environment',
     type=str,
-    help="conda environment used for mutacc"
-)
+    help="conda environment used for mutacc")
 @click.option('-C','--mutacc-config',
     type=click.Path(exists=True),
     callback=parse_path,
-    help="configuration file used for mutacc"
-)
+    help="configuration file used for mutacc")
 @click.option('-L', '--log-directory',
     type=click.Path(exists=True),
     callback=parse_path,
-    help="Directory for slurm logs"
-)
+    help="Directory for slurm logs")
 @click.option('-E', '--email',
     type=str,
-    help="email to notify"
-)
+    help="email to notify")
 @click.option('-t', '--time',
     type=str,
-    help="Time for slurm jobs"
-)
+    help="Time for slurm jobs")
 @click.option('-a', '--account',
     type=str,
-    help="Account for slurm job"
-)
+    help="Account for slurm job")
 @click.option('-P','--priority',
     type=str,
-    help="priority for slurm job"
-)
+    help="priority for slurm job")
 @click.option('-p','--padding',
     type=int,
-    help="padding for genomic regions. this defaults to 0 for WES cases"
-)
+    help="padding for genomic regions. this defaults to 0 for WES cases")
 @click.option('-D','--dry',
     is_flag=True,
-    help="dry run"
-)
+    help="dry run")
 @click.option('-V','--verbose',
     is_flag=True,
-    help="verbose"
-)
+    help="verbose")
 @click.option('-k', '--conda',
     is_flag=True,
     help="Use 'conda activate' to source environment")
 @click.option('--scout-config',
     type=click.Path(exists=True),
     callback=parse_path,
-    help="configuration file used for scout"
-)
+    help="configuration file used for scout")
 @click.option('--hk-config',
     type=click.Path(exists=True),
     callback=parse_path,
-    help="configuration file used for housekeeper"
-)
+    help="configuration file used for housekeeper")
 @click.pass_context
 def extract_command(ctx,
                     case_id,
@@ -108,7 +96,7 @@ def extract_command(ctx,
     scout_binary = ctx.obj.get('scout_binary')
     hk_config = hk_config or ctx.obj.get('housekeeper_config')
     hk_binary = ctx.obj.get('housekeeper_binary')
-    mutacc_config = mutacc_config or ctx.obj.get('mutacc_config')
+    mutacc_config = mutacc_config or ctx.obj['mutacc_config']
     mutacc_binary = ctx.obj.get('mutacc_binary')
 
     slurm_config = {}
@@ -122,32 +110,35 @@ def extract_command(ctx,
     slurm_options['account'] = account or slurm_config.get('account')
     slurm_options['priority'] = priority or slurm_config.get('priority')
 
+    with open(Path(mutacc_config)) as yaml_handle:
+        mutacc_config_dict = yaml.load(yaml_handle)
+        mutacc_tmp = Path(mutacc_config_dict[MUTACC_ROOT_DIR]).joinpath(MUTACC_TMP)
 
-
+    mutacc_auto_tmp_dir = mutacc_tmp.joinpath('mutacc_auto')
+    if not mutacc_auto_tmp_dir.is_dir():
+        mutacc_auto_tmp_dir.mkdir(parents=True)
     #Create a temporary dir to store created vcf, yaml, and script files
-    with TemporaryDirectory() as tmp_dir:
+    with TemporaryDirectory(directory=mutacc_auto_tmp_dir) as tmp_dir:
 
         LOG.info("All files are placed in {}".format(tmp_dir))
 
         #Prepare input for case with case_id or days since updated
         inputs = get_inputs(tmp_dir, case_id=case_id, days_ago=days_ago,
-                            padding = padding, scout_config=scout_config,
+                            padding=padding, scout_config=scout_config,
                             scout_binary=scout_binary, hk_config=hk_config,
                             hk_binary=hk_binary)
 
         for case_input in inputs:
             #Extract reads for every case
-            sbatch_script = run_mutacc_extract(
-                    tmp_dir,
-                    mutacc_config,
-                    case_input['input_file'],
-                    case_input['padding'],
-                    environment,
-                    slurm_options,
-                    conda=conda,
-                    dry=dry,
-                    mutacc_binary=mutacc_binary
-                )
+            sbatch_script = run_mutacc_extract(tmp_dir,
+                                               mutacc_config,
+                                               case_input['input_file'],
+                                               case_input['padding'],
+                                               environment,
+                                               slurm_options,
+                                               conda=conda,
+                                               dry=dry,
+                                               mutacc_binary=mutacc_binary)
 
             if verbose:
 
