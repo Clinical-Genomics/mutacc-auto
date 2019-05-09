@@ -4,12 +4,13 @@ import shutil
 class TemporaryDirectory():
     """Context manager for tempfile.mkdtemp() so it's usable with "with" statement."""
 
-    def __init__(self, delete_dir=True):
+    def __init__(self, directory, delete_dir=False):
 
-        self.delete_dir=delete_dir
+        self.delete_dir = delete_dir
+        self.directory = directory
 
     def __enter__(self):
-        self.name = tempfile.mkdtemp()
+        self.name = tempfile.mkdtemp(dir=self.directory)
         return self.name
 
     def __exit__(self, exc_type, exc_value, traceback):
