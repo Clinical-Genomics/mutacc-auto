@@ -49,15 +49,15 @@ class MutaccExport(MutaccCommand):
         self.add_subcommand('export')
 
         if variant_query is not None:
-            self.add_option('v', variant_query)
+            self.add_option('variant-query', variant_query)
         if case_query is not None:
-            self.add_option('c', case_query)
+            self.add_option('case-query', case_query)
         if sample_name is not None:
-            self.add_option('n', sample_name)
+            self.add_option('sample-name', sample_name)
         if proband:
-            self.add_option('p')
+            self.add_option('proband')
 
-        self.add_option('m', member)
+        self.add_option('member', member)
 
 class MutaccSynthesize(MutaccCommand):
 
@@ -73,5 +73,3 @@ class MutaccSynthesize(MutaccCommand):
         if fastq2 is not None:
             self.add_option('background-fastq2', fastq2)
         self.add_option('query', query_file)
-
-        
