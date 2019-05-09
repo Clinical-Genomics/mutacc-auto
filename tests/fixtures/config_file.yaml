@@ -3,7 +3,7 @@ scout_config: /path/to/scout_config
 scout_binary: /path/to/scout
 housekeeper_config: /path/to/housekeeper_config
 housekeeper_binary: /path/to/housekeeper
-mutacc_config: /path/to/mutacc_config
+mutacc_config: /Users/adam.rosenbaum/develop/mutacc_auto/tests/fixtures/mutacc_config.yaml
 mutacc_binary: /path/to/mutacc
 
 slurm:
