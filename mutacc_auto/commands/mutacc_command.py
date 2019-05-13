@@ -58,6 +58,7 @@ class MutaccExport(MutaccCommand):
             self.add_option('proband')
 
         self.add_option('member', member)
+        self.add_option('json-out')
 
 class MutaccSynthesize(MutaccCommand):
 

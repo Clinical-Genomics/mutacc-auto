@@ -1,7 +1,8 @@
 import click
 import logging
+from pathlib import Path
 
-from mutacc_auto.recipes.export_recipe import export_trio
+from mutacc_auto.recipes.export_recipe import export_datasets
 
 LOG = logging.getLogger(__name__)
 
@@ -16,12 +17,19 @@ def parse_path(ctx, param, value):
     type=click.Path(exists=True),
     callback=parse_path,
     help="configuration file used for mutacc")
+@click.option('-o','--vcf-out',
+    type=click.Path(exists=False),
+    callback=parse_path,
+    help="Path to created vcf-file")
 @click.pass_context
-def export_command(ctx, mutacc_config):
+def export_command(ctx, mutacc_config, vcf_out):
 
     mutacc_config = mutacc_config or ctx.obj['mutacc_config']
     mutacc_binary = ctx.obj.get('mutacc_binary')
 
-    export_trio(mutacc_config=mutacc_config,
-                mutacc_binary=mutacc_binary,
-                case_query='{}')
+    files = export_datasets(mutacc_config=mutacc_config,
+                            mutacc_binary=mutacc_binary,
+                            case_query='{}',
+                            merged_vcf_path=vcf_out)
+
+    LOG.debug("files created: {}".format(files))
