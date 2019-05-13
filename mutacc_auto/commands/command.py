@@ -73,7 +73,7 @@ class Command():
 
         command_stdout = command_stdout.decode('utf-8')
 
-        LOG.debug("Executed:".format(str(self)))
+        LOG.debug("Executed: {}".format(str(self)))
 
         return command_stdout
 
@@ -96,6 +96,6 @@ class Command():
 
             raise
 
-        LOG.debug("Executed:".format(str(self)))
+        LOG.debug("Executed: {}".format(str(self)))
 
         return result

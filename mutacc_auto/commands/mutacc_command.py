@@ -74,3 +74,4 @@ class MutaccSynthesize(MutaccCommand):
         if fastq2 is not None:
             self.add_option('background-fastq2', fastq2)
         self.add_option('query', query_file)
+        self.add_option('json-out')
