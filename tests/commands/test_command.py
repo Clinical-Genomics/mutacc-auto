@@ -6,7 +6,7 @@ from mutacc_auto.commands.command import Command
 from mutacc_auto.commands.sbatch_command import SbatchCommand
 from mutacc_auto.commands.scout_command import (ScoutExportCases, ScoutExportCausativeVariants)
 from mutacc_auto.commands.housekeeper_command import HousekeeperCommand
-from mutacc_auto.commands.mutacc_command import (MutaccExtract, MutaccImport)
+from mutacc_auto.commands.mutacc_command import (MutaccExtract, MutaccImport, MutaccExport, MutaccSynthesize)
 
 def test_Command():
 
@@ -92,3 +92,17 @@ def test_MutaccImport():
     command = MutaccImport('config_file', 'case')
 
     assert str(command) == "mutacc --config-file config_file db import case"
+
+def test_MutaccExport():
+
+    command = MutaccExport(config_file='config_file',
+                           mutacc_binary='path/to/mutacc',
+                           case_query='{}',
+                           variant_query='{}',
+                           proband=True,
+                           member='child',
+                           sample_name='sample')
+
+    assert str(command) == ("path/to/mutacc --config-file config_file db export "
+                            "--variant-query {} --case-query {} --sample-name sample "
+                            "--proband --member child --json-out")

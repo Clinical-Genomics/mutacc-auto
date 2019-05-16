@@ -16,7 +16,7 @@ def parse_path(ctx, param, value):
     return value
 
 @click.command('export')
-@click.option('-C', '--mutacc-config',
+@click.option('-c', '--mutacc-config',
               type=click.Path(exists=True),
               callback=parse_path,
               help="configuration file used for mutacc")

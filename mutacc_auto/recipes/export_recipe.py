@@ -212,8 +212,6 @@ def export_dataset(mutacc_config, background=None, mutacc_binary=None, case_quer
         os.remove(zipped)
         os.remove(indexed)
 
-    print("FILES: ", files)
-    print("BACKGROUNDS: ", background)
     samples = {member: {'fastq1': background[member]['fastq1'],
                         'fastq2': background[member]['fastq2'],
                         'bam': background[member]['bam'],
