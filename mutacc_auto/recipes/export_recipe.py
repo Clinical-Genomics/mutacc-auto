@@ -141,6 +141,8 @@ def synthesize_dataset(sample, mutacc_binary=None, mutacc_config=None, slurm_opt
             dataset (list): list of fastq files created
     """
 
+
+
     synthesize_command = MutaccSynthesize(config_file=mutacc_config,
                                           mutacc_binary=mutacc_binary,
                                           fastq1=sample['fastq1'],
@@ -148,10 +150,12 @@ def synthesize_dataset(sample, mutacc_binary=None, mutacc_config=None, slurm_opt
                                           bam_file=sample['bam'],
                                           query_file=sample['query'])
 
+
+
     with SbatchScript(tmp_dir, environment, slurm_options, conda=conda) as sbatch_handle:
 
         sbatch_handle.write_section(str(synthesize_command))
-        sbatch_handle.write_section("rm -r {}".format(tmp_dir))
+        sbatch_handle.write_section("rm -r {}".format(sbatch_handle.path))
         sbatch_path = sbatch_handle.path
 
     sbatch_command = SbatchCommand(sbatch_path)
