@@ -37,3 +37,41 @@ class MutaccImport(MutaccCommand):
         self.add_subcommand('db')
         self.add_subcommand('import')
         self.add_argument(str(extracted_case_file))
+
+class MutaccExport(MutaccCommand):
+
+    def __init__(self, config_file, mutacc_binary=None, case_query=None, variant_query=None,
+                 proband=False, member='affected', sample_name=None):
+
+        super(MutaccExport, self).__init__(config_file, mutacc_binary=mutacc_binary)
+
+        self.add_subcommand('db')
+        self.add_subcommand('export')
+
+        if variant_query is not None:
+            self.add_option('variant-query', variant_query)
+        if case_query is not None:
+            self.add_option('case-query', case_query)
+        if sample_name is not None:
+            self.add_option('sample-name', sample_name)
+        if proband:
+            self.add_option('proband')
+
+        self.add_option('member', member)
+        self.add_option('json-out')
+
+class MutaccSynthesize(MutaccCommand):
+
+    def __init__(self, config_file, fastq1, bam_file, query_file, fastq2=None,
+                 mutacc_binary=None):
+
+        super(MutaccSynthesize, self).__init__(config_file, mutacc_binary=mutacc_binary)
+
+        self.add_subcommand('synthesize')
+
+        self.add_option('background-bam', bam_file)
+        self.add_option('background-fastq', fastq1)
+        if fastq2 is not None:
+            self.add_option('background-fastq2', fastq2)
+        self.add_option('query', query_file)
+        self.add_option('json-out')
