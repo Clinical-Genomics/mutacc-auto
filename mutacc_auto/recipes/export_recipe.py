@@ -9,6 +9,8 @@ from pathlib import Path
 
 from mutacc_auto.commands.mutacc_command import (MutaccExport, MutaccSynthesize)
 from mutacc_auto.commands.vcf_command import (BgzipCommand, TabixCommand, BcftoolsMergeCommand)
+from mutacc_auto.commands.sbatch_command import SbatchCommand
+from mutacc_auto.files.sbatch import SbatchScript
 
 LOG = logging.getLogger(__name__)
 
@@ -124,7 +126,8 @@ def merge_vcf_files(vcf_files, out_file=None):
     merge_command.call()
     return out_file
 
-def synthesize_dataset(sample, mutacc_binary=None, mutacc_config=None):
+def synthesize_dataset(sample, mutacc_binary=None, mutacc_config=None, slurm_options=None,
+                       tmp_dir=None, environment=None, dry=False, conda=False):
 
     """
         Uses 'mutacc synthesize' to make synthetic dataset
@@ -145,12 +148,26 @@ def synthesize_dataset(sample, mutacc_binary=None, mutacc_config=None):
                                           bam_file=sample['bam'],
                                           query_file=sample['query'])
 
-    dataset = synthesize_command.check_output()
-    dataset = json.loads(dataset)['fastq_files']
-    return dataset
+    with SbatchScript(tmp_dir, environment, slurm_options, conda=conda) as sbatch_handle:
+
+        sbatch_handle.write_section(str(synthesize_command))
+        sbatch_handle.write_section("rm -r {}".format(tmp_dir))
+        sbatch_path = sbatch_handle.path
+
+    sbatch_command = SbatchCommand(sbatch_path)
+    if not dry:
+        log_msg = f"Running {sbatch_command}"
+        LOG.info(log_msg)
+        sbatch_command.call()
+    else:
+        log_msg = f"Would run {sbatch_command}"
+        LOG.info(log_msg)
+
+    return sbatch_path
 
 
-def synthesize_trio(mutacc_config, samples, mutacc_binary=None):
+def synthesize_trio(mutacc_config, samples, mutacc_binary=None, slurm_options=None,
+                    tmp_dir=None, environment=None, dry=False, conda=False):
     """
         Synthesizes a trio
 
@@ -163,18 +180,24 @@ def synthesize_trio(mutacc_config, samples, mutacc_binary=None):
             datasets (dict): fastq files for each sample
 
     """
-    datasets = {}
+    sbatch_files = {}
     for member in samples.keys():
-        dataset = synthesize_dataset(mutacc_config=mutacc_config,
-                                     mutacc_binary=mutacc_binary,
-                                     sample=samples[member])
-        datasets[member] = dataset
+        sbatch_file = synthesize_dataset(mutacc_config=mutacc_config,
+                                         mutacc_binary=mutacc_binary,
+                                         sample=samples[member],
+                                         slurm_options=slurm_options,
+                                         tmp_dir=tmp_dir,
+                                         environment=environment,
+                                         dry=dry,
+                                         conda=conda)
+        sbatch_files[member] = sbatch_file
 
-    return datasets
+    return sbatch_files
 
 
 def export_dataset(mutacc_config, background=None, mutacc_binary=None, case_query=None,
-                   variant_query=None, merged_vcf_path=None):
+                   variant_query=None, merged_vcf_path=None, slurm_options=None,
+                   tmp_dir=None, environment=None, conda=False, dry=False):
 
     """
         Export a synthetic trio
@@ -217,8 +240,13 @@ def export_dataset(mutacc_config, background=None, mutacc_binary=None, case_quer
                         'bam': background[member]['bam'],
                         'query': files[member]['query_file']} for member in files.keys()}
 
-    datasets = synthesize_trio(mutacc_config=mutacc_config,
-                               samples=samples,
-                               mutacc_binary=mutacc_binary)
+    sbatch_files = synthesize_trio(mutacc_config=mutacc_config,
+                                   samples=samples,
+                                   mutacc_binary=mutacc_binary,
+                                   slurm_options=slurm_options,
+                                   tmp_dir=tmp_dir,
+                                   environment=environment,
+                                   dry=dry,
+                                   conda=conda)
 
-    return datasets
+    return sbatch_files

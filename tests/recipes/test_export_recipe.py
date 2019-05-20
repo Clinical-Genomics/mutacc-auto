@@ -1,6 +1,8 @@
 import pytest
 import json
 from mock import patch
+import os
+from pathlib import Path
 
 from mutacc_auto.recipes.export_recipe import (run_mutacc_export_command,
                                                export_trio,
@@ -65,30 +67,35 @@ def test_merge_vcf_files(call_mock):
     assert merged_vcf == out_vcf
 
 
-@patch.object(Command, 'check_output')
-def test_synthesize_dataset(check_output_mock, mutacc_synthesize_output, mutacc_synthesize_input):
+@patch.object(Command, 'call')
+def test_synthesize_dataset(check_output_mock, mutacc_synthesize_output, mutacc_synthesize_input, tmpdir):
 
     check_output_mock.return_value = mutacc_synthesize_output
-    dataset = synthesize_dataset(sample=mutacc_synthesize_input,
-                                 mutacc_binary='binary',
-                                 mutacc_config='path/to/config')
+    tmp_dir = Path(tmpdir.mkdir('test_run_mutacc_extract'))
+    sbatch_path = synthesize_dataset(sample=mutacc_synthesize_input,
+                                     mutacc_binary='binary',
+                                     mutacc_config='path/to/config',
+                                     slurm_options={'log_directory': '/path/to/log/dir'},
+                                     tmp_dir=tmp_dir
+                                     )
 
-    assert dataset == json.loads(mutacc_synthesize_output)['fastq_files']
+    assert os.path.exists(sbatch_path)
 
 
-@patch.object(Command, 'check_output')
-def test_synthesize_trio(check_output_mock, mutacc_synthesize_output, mutacc_synthesize_input):
+@patch.object(Command, 'call')
+def test_synthesize_trio(check_output_mock, mutacc_synthesize_input, tmpdir):
 
-    check_output_mock.return_value = mutacc_synthesize_output
+    tmp_dir = Path(tmpdir.mkdir('test_run_mutacc_extract'))
     datasets = synthesize_trio(mutacc_config='path/to/config',
                                samples={'father': mutacc_synthesize_input,
                                         'mother': mutacc_synthesize_input,
                                         'child': mutacc_synthesize_input},
-                               mutacc_binary='mutacc_binary')
-    synthesize_output = json.loads(mutacc_synthesize_output)['fastq_files']
-    assert datasets == {'father': synthesize_output,
-                        'mother': synthesize_output,
-                        'child': synthesize_output}
+                               mutacc_binary='mutacc_binary',
+                               tmp_dir=tmp_dir,
+                               slurm_options={'log_directory': '/path/to/log/dir'})
+
+    for member in datasets.keys():
+        assert os.path.exists(datasets[member])
 
 @patch('mutacc_auto.recipes.export_recipe.export_trio')
 @patch('mutacc_auto.recipes.export_recipe.bgzip_vcf_file')
