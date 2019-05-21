@@ -27,7 +27,7 @@ class NoBamException(Exception):
 
 def get_case(case, bam_file_paths, vcf_file_path):
 
-    case_id = case['display_name']
+    case_id = case['_id']
 
     #Instatiate case dictionary with case_id
     case_obj = {
@@ -49,7 +49,6 @@ def get_case(case, bam_file_paths, vcf_file_path):
         'case': case_obj,
         'samples': samples_obj,
         'variants': vcf_file_path
-
     }
 
 
@@ -70,13 +69,19 @@ def assemble_samples(individuals, bam_files = None):
     samples = []
 
     for individual in individuals:
+        sex = 'unknown'
+        if individual['sex'] == '1':
+            sex = 'male'
+        if individual['sex'] == '2':
+            sex = 'female'
+
         samples.append(
             {
                 'sample_id': individual['individual_id'],
-                'sex': 'male' if (individual['sex'] == '1') else 'female',
+                'sex': sex,
                 'phenotype': 'affected' if (individual['phenotype'] == 2) else 'unaffected',
-                'father': individual['father'],
-                'mother': individual['mother'],
+                'father': individual['father'] if individual['father'] else '0',
+                'mother': individual['mother'] if individual['mother'] else '0',
                 'analysis_type': individual['analysis_type'],
                 'bam_file': bam_files.get(individual['individual_id']) if bam_files else None
             }
