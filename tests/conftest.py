@@ -22,7 +22,7 @@ def case_dict():
 
     with open(CASE_YAML) as case_handle:
 
-        case = yaml.load(case_handle)
+        case = yaml.load(case_handle, Loader=yaml.FullLoader)
 
     return case
 
@@ -31,7 +31,7 @@ def scout_case():
 
     with open(SCOUT_OUT_FILE) as case_handle:
 
-        case = yaml.load(case_handle)
+        case = yaml.load(case_handle, Loader=yaml.FullLoader)
 
     return case[0]
 
