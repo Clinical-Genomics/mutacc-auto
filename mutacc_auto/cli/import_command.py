@@ -36,4 +36,4 @@ def import_command(ctx,
                 LOG.info("importing {}".format(filename))
                 if not dry:
                     import_extracted_case(str(case_path), mutacc_config)
-                    os.remove(case_path)
+                    #os.remove(case_path)

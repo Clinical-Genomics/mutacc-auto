@@ -35,7 +35,6 @@ def write_sbatch_script(tmp_dir,
         ) as sbatch_handle:
 
         sbatch_handle.write_section(mutacc_extract_command)
-        sbatch_handle.write_section("rm -r {}".format(tmp_dir))
 
         sbatch_path = sbatch_handle.path
 

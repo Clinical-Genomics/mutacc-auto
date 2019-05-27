@@ -155,7 +155,6 @@ def synthesize_dataset(sample, mutacc_binary=None, mutacc_config=None, slurm_opt
     with SbatchScript(tmp_dir, environment, slurm_options, conda=conda) as sbatch_handle:
 
         sbatch_handle.write_section(str(synthesize_command))
-        sbatch_handle.write_section("rm -r {}".format(sbatch_handle.path))
         sbatch_path = sbatch_handle.path
 
     sbatch_command = SbatchCommand(sbatch_path)
