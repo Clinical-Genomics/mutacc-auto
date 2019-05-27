@@ -39,7 +39,14 @@ def get_case(case, bam_file_paths, vcf_file_path):
 
         if case.get(field):
 
-            case_obj[field] = case[field]
+            if field == 'panels':
+                panels = [
+                    {'display_name': panel.get('display_name'),
+                     'panel_name': panel.get('panel_name')} for panel in case[field]
+                ]
+                case_obj[field] = panels
+            else:
+                case_obj[field] = case[field]
 
     #Get sample list
     samples_obj = assemble_samples(case['individuals'], bam_file_paths)
