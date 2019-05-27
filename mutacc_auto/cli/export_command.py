@@ -7,9 +7,6 @@ import yaml
 from mutacc_auto.recipes.export_recipe import export_dataset
 from mutacc_auto.utils.tmp_dir import TemporaryDirectory
 
-MUTACC_TMP = 'temporaries'
-MUTACC_ROOT_DIR = 'root_dir'
-
 LOG = logging.getLogger(__name__)
 
 def parse_path(ctx, param, value):
@@ -19,16 +16,13 @@ def parse_path(ctx, param, value):
     return value
 
 @click.command('export')
-@click.option('-c', '--mutacc-config',
-              type=click.Path(exists=True),
-              callback=parse_path,
-              help="configuration file used for mutacc")
 @click.option('-o', '--vcf-out',
               type=click.Path(exists=False),
               callback=parse_path,
               help="Path to created vcf-file")
 @click.option('-b', '--background',
               type=click.Path(exists=True),
+              callback=parse_path,
               help="yaml file with genomic backgrounds for each sample in trio")
 @click.option('-k', '--conda',
               is_flag=True,
@@ -43,32 +37,17 @@ def parse_path(ctx, param, value):
               is_flag=True,
               help="verbose")
 @click.pass_context
-def export_command(ctx, mutacc_config, vcf_out, background, conda, environment, dry, verbose):
-
-    mutacc_config = mutacc_config or ctx.obj['mutacc_config']
-    mutacc_binary = ctx.obj.get('mutacc_binary')
+def export_command(ctx, vcf_out, background, conda, environment, dry, verbose):
 
     with open(background, 'r') as background_handle:
-        background_datasets = yaml.load(background_handle)
+        background_datasets = yaml.load(background_handle, Loader=yaml.FullLoader)
 
-    slurm_config = {}
-    if ctx.obj.get('slurm'):
-        slurm_config = ctx.obj['slurm']
+    mutacc_config = ctx.obj['mutacc_config']
+    mutacc_binary = ctx.obj.get('mutacc_binary')
 
-    slurm_options = {}
-    slurm_options['log_directory'] = slurm_config['log_directory']
-    slurm_options['email'] = slurm_config['email']
-    slurm_options['time'] = slurm_config['time']
-    slurm_options['account'] = slurm_config['account']
-    slurm_options['priority'] = slurm_config['priority']
+    slurm_options = ctx.obj['slurm_options']
 
-    with open(Path(mutacc_config)) as yaml_handle:
-        mutacc_config_dict = yaml.load(yaml_handle)
-        mutacc_tmp = Path(mutacc_config_dict[MUTACC_ROOT_DIR]).joinpath(MUTACC_TMP)
-
-    mutacc_auto_tmp_dir = mutacc_tmp.joinpath('mutacc_auto')
-    if not mutacc_auto_tmp_dir.is_dir():
-        mutacc_auto_tmp_dir.mkdir(parents=True)
+    mutacc_auto_tmp_dir = ctx.obj['tmp_dir']
 
     with TemporaryDirectory(directory=mutacc_auto_tmp_dir) as tmp_dir:
 

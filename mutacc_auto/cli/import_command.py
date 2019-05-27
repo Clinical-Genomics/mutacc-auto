@@ -8,22 +8,9 @@ import os
 
 from mutacc_auto.recipes.import_recipe import import_extracted_case
 
-MUTACC_IMPORT_DIR = 'imports'
-MUTACC_ROOT_DIR = 'root_dir'
-
 LOG = logging.getLogger(__name__)
 
-def parse_path(ctx, param, value):
-
-    if value:
-        value = str(Path(str(value)).expanduser().absolute().resolve())
-    return value
-
 @click.command('import')
-@click.option('-C','--config-file',
-              type=click.Path(exists=True),
-              callback=parse_path,
-              help="configuration file used for mutacc")
 @click.option('-D','--dry',
               is_flag=True,
               help="dry run")
@@ -32,18 +19,11 @@ def parse_path(ctx, param, value):
               help="verbose")
 @click.pass_context
 def import_command(ctx,
-                   config_file,
                    dry,
                    verbose):
 
-    mutacc_config = ctx.obj.get('mutacc_config') or config_file
-    #Open and read config for mutacc
-    with open(Path(mutacc_config)) as yaml_handle:
-
-        mutacc_config_dict = yaml.load(yaml_handle)
-
-    #Find directory where cases ready for import are stored
-    import_dir = Path(mutacc_config_dict[MUTACC_ROOT_DIR]).joinpath(MUTACC_IMPORT_DIR)
+    import_dir = ctx.obj['import_dir']
+    mutacc_config = ctx.obj['mutacc_config']
 
     #For each case found in the import_dir stated in the mutacc config file
     #import to database
@@ -55,5 +35,5 @@ def import_command(ctx,
             if str(case_path).endswith('.mutacc'):
                 LOG.info("importing {}".format(filename))
                 if not dry:
-                    import_extracted_case(str(case_path), config_file)
+                    import_extracted_case(str(case_path), mutacc_config)
                     os.remove(case_path)
