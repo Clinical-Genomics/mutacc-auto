@@ -48,6 +48,8 @@ class SbatchScript():
 
             #if option name not given through CLI, use dedault
             option_value = value[1]
+            if key == 'jobname':
+                option_value = f"{value[1]}_{job_prefix}"
             if key in cli_options:
                 option_value = slurm_options[key]
 
