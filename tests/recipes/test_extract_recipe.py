@@ -13,7 +13,8 @@ def test_write_sbatch_script(tmpdir):
     sbatch_path = write_sbatch_script(tmp_dir,
                                       'environment',
                                       'mutacc extract ...',
-                                      {'log_directory': tmp_dir, 'email': 'email'})
+                                      {'log_directory': tmp_dir, 'email': 'email'},
+                                      'case_id')
 
     assert os.path.isfile(sbatch_path)
 
@@ -39,6 +40,7 @@ def test_run_mutacc_extract(mock_sbatch_run, tmpdir):
         'config',
         'input_file',
         123,
+        'case_id',
         'env',
         {'log_directory': tmp_dir, 'email': 'email'},
     )

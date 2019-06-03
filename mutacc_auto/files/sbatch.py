@@ -25,7 +25,7 @@ class SbatchScript():
     """
 
     @staticmethod
-    def get_header(slurm_options):
+    def get_header(slurm_options, job_prefix):
 
         """
             Returns header to be printed in sbatch scripts
@@ -60,8 +60,8 @@ class SbatchScript():
         log_directory = Path(slurm_options['log_directory'])
 
         #Include Jobname in log file names
-        stderr_file = log_directory.joinpath(f"{JOBNAME}.{STDERR_SUFFIX}")
-        stdout_file = log_directory.joinpath(f"{JOBNAME}.{STDOUT_SUFFIX}")
+        stderr_file = log_directory.joinpath(f"{job_prefix}_{JOBNAME}.{STDERR_SUFFIX}")
+        stdout_file = log_directory.joinpath(f"{job_prefix}_{JOBNAME}.{STDOUT_SUFFIX}")
 
         #write log files to header
         header += f"{HEADER_PREFIX} -e {stderr_file}{NEWLINE}"
@@ -96,7 +96,7 @@ class SbatchScript():
         return SHEBANG
 
 
-    def __init__(self, job_directory, environment, slurm_options, conda=False):
+    def __init__(self, job_directory, environment, slurm_options, job_prefix="", conda=False):
 
         """
             Args:
@@ -112,7 +112,7 @@ class SbatchScript():
                                                          dir=job_directory,
                                                          delete=False)
         self.shebang = self.get_shebang()
-        self.header = self.get_header(slurm_options)
+        self.header = self.get_header(slurm_options, job_prefix)
         self.environment = self.get_environment(environment, conda)
 
         #Write sections in script

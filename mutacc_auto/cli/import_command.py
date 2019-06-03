@@ -14,13 +14,9 @@ LOG = logging.getLogger(__name__)
 @click.option('-D','--dry',
               is_flag=True,
               help="dry run")
-@click.option('-V','--verbose',
-              is_flag=True,
-              help="verbose")
 @click.pass_context
 def import_command(ctx,
-                   dry,
-                   verbose):
+                   dry):
 
     import_dir = ctx.obj['import_dir']
     mutacc_config = ctx.obj['mutacc_config']
@@ -36,4 +32,4 @@ def import_command(ctx,
                 LOG.info("importing {}".format(filename))
                 if not dry:
                     import_extracted_case(str(case_path), mutacc_config)
-                    #os.remove(case_path)
+                    os.remove(case_path)

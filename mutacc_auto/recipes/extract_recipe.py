@@ -10,6 +10,7 @@ def write_sbatch_script(tmp_dir,
                         environment,
                         mutacc_extract_command,
                         slurm_options,
+                        case_id,
                         conda=False):
 
     """
@@ -31,6 +32,7 @@ def write_sbatch_script(tmp_dir,
             tmp_dir,
             environment,
             slurm_options,
+            case_id,
             conda=conda
         ) as sbatch_handle:
 
@@ -80,6 +82,7 @@ def run_mutacc_extract(tmp_dir,
                        mutacc_config,
                        input_file,
                        padding,
+                       case_id,
                        environment,
                        slurm_options,
                        conda=False,
@@ -99,6 +102,7 @@ def run_mutacc_extract(tmp_dir,
                                              environment,
                                              mutacc_extract_command,
                                              slurm_options,
+                                             case_id,
                                              conda)
 
 

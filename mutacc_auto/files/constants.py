@@ -2,7 +2,7 @@ import datetime
 
 def get_timestamp():
 
-    return str(datetime.datetime.now()).replace(' ','_').replace('.','_')
+    return str(datetime.datetime.now()).replace(' ','_').replace('.','_').replace(':','_')
 
 SHEBANG = '#!/bin/bash'
 

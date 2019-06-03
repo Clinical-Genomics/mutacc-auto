@@ -156,6 +156,8 @@ def get_inputs(tmp_dir ,case_id = None, days_ago = None, padding = None,
         #case_id = case['display_name']
         case_id = case['_id']
 
+        input_dict['case_id'] = case_id
+
         bam_paths = get_bams(case_id, hk_config=hk_config, hk_binary=hk_binary)
 
         vcf_path = write_vcf(case_id, tmp_dir, scout_config=scout_config, scout_binary=scout_binary)
