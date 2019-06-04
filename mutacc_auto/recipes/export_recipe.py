@@ -126,8 +126,9 @@ def merge_vcf_files(vcf_files, out_file=None):
     merge_command.call()
     return out_file
 
-def synthesize_dataset(sample, mutacc_binary=None, mutacc_config=None, slurm_options=None,
-                       tmp_dir=None, environment=None, dry=False, conda=False):
+def synthesize_dataset(sample, sample_dir=None, mutacc_binary=None, mutacc_config=None,
+                       slurm_options=None, tmp_dir=None, environment=None, dry=False,
+                       conda=False):
 
     """
         Uses 'mutacc synthesize' to make synthetic dataset
@@ -141,14 +142,13 @@ def synthesize_dataset(sample, mutacc_binary=None, mutacc_config=None, slurm_opt
             dataset (list): list of fastq files created
     """
 
-
-
     synthesize_command = MutaccSynthesize(config_file=mutacc_config,
                                           mutacc_binary=mutacc_binary,
                                           fastq1=sample['fastq1'],
                                           fastq2=sample['fastq2'],
                                           bam_file=sample['bam'],
-                                          query_file=sample['query'])
+                                          query_file=sample['query'],
+                                          sample_dir=sample_dir)
 
 
 
@@ -169,7 +169,7 @@ def synthesize_dataset(sample, mutacc_binary=None, mutacc_config=None, slurm_opt
     return sbatch_path
 
 
-def synthesize_trio(mutacc_config, samples, mutacc_binary=None, slurm_options=None,
+def synthesize_trio(mutacc_config, samples, dataset_dir=None, mutacc_binary=None, slurm_options=None,
                     tmp_dir=None, environment=None, dry=False, conda=False):
     """
         Synthesizes a trio
@@ -185,9 +185,16 @@ def synthesize_trio(mutacc_config, samples, mutacc_binary=None, slurm_options=No
     """
     sbatch_files = {}
     for member in samples.keys():
+
+        sample_dir = None
+        if dataset_dir is not None:
+            sample_dir = Path(dataset_dir).joinpath(member)
+            sample_dir.mkdir()
+
         sbatch_file = synthesize_dataset(mutacc_config=mutacc_config,
                                          mutacc_binary=mutacc_binary,
                                          sample=samples[member],
+                                         sample_dir=sample_dir,
                                          slurm_options=slurm_options,
                                          tmp_dir=tmp_dir,
                                          environment=environment,
@@ -200,7 +207,7 @@ def synthesize_trio(mutacc_config, samples, mutacc_binary=None, slurm_options=No
 
 def export_dataset(mutacc_config, background=None, mutacc_binary=None, case_query=None,
                    variant_query=None, merged_vcf_path=None, slurm_options=None,
-                   tmp_dir=None, environment=None, conda=False, dry=False):
+                   tmp_dir=None, environment=None, conda=False, dry=False, dataset_dir=None):
 
     """
         Export a synthetic trio
@@ -245,6 +252,7 @@ def export_dataset(mutacc_config, background=None, mutacc_binary=None, case_quer
 
     sbatch_files = synthesize_trio(mutacc_config=mutacc_config,
                                    samples=samples,
+                                   dataset_dir=dataset_dir,
                                    mutacc_binary=mutacc_binary,
                                    slurm_options=slurm_options,
                                    tmp_dir=tmp_dir,

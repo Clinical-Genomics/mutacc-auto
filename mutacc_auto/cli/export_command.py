@@ -24,6 +24,10 @@ def parse_path(ctx, param, value):
               type=click.Path(exists=True),
               callback=parse_path,
               help="yaml file with genomic backgrounds for each sample in trio")
+@click.option('-d', '--dataset-dir',
+              type=click.Path(exists=True),
+              callback=parse_path,
+              help="Directory where fastq files are placed")
 @click.option('-k', '--conda',
               is_flag=True,
               help="Use 'conda activate' to source environment")
@@ -37,7 +41,7 @@ def parse_path(ctx, param, value):
               is_flag=True,
               help="verbose")
 @click.pass_context
-def export_command(ctx, vcf_out, background, conda, environment, dry, verbose):
+def export_command(ctx, vcf_out, background, dataset_dir, conda, environment, dry, verbose):
 
     with open(background, 'r') as background_handle:
         background_datasets = yaml.load(background_handle, Loader=yaml.FullLoader)
@@ -61,7 +65,8 @@ def export_command(ctx, vcf_out, background, conda, environment, dry, verbose):
                                       tmp_dir=tmp_dir,
                                       environment=environment,
                                       conda=conda,
-                                      dry=dry)
+                                      dry=dry,
+                                      dataset_dir=dataset_dir)
 
     if verbose:
 

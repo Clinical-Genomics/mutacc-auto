@@ -62,8 +62,8 @@ class MutaccExport(MutaccCommand):
 
 class MutaccSynthesize(MutaccCommand):
 
-    def __init__(self, config_file, fastq1, bam_file, query_file, fastq2=None,
-                 mutacc_binary=None):
+    def __init__(self, config_file, fastq1, bam_file, query_file, sample_dir=None,
+                 fastq2=None, mutacc_binary=None):
 
         super(MutaccSynthesize, self).__init__(config_file, mutacc_binary=mutacc_binary)
 
@@ -74,4 +74,6 @@ class MutaccSynthesize(MutaccCommand):
         if fastq2 is not None:
             self.add_option('background-fastq2', fastq2)
         self.add_option('query', query_file)
+        if sample_dir is not None:
+            self.add_option('dataset-dir', sample_dir)
         self.add_option('json-out')
