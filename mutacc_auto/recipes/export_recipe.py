@@ -128,7 +128,7 @@ def merge_vcf_files(vcf_files, out_file=None):
 
 def synthesize_dataset(sample, sample_dir=None, mutacc_binary=None, mutacc_config=None,
                        slurm_options=None, tmp_dir=None, environment=None, dry=False,
-                       conda=False):
+                       conda=False, job_prefix=None):
 
     """
         Uses 'mutacc synthesize' to make synthetic dataset
@@ -152,7 +152,8 @@ def synthesize_dataset(sample, sample_dir=None, mutacc_binary=None, mutacc_confi
 
 
 
-    with SbatchScript(tmp_dir, environment, slurm_options, conda=conda) as sbatch_handle:
+    with SbatchScript(tmp_dir, environment, slurm_options, conda=conda,
+                      job_prefix=job_prefix) as sbatch_handle:
 
         sbatch_handle.write_section(str(synthesize_command))
         sbatch_path = sbatch_handle.path
@@ -199,7 +200,8 @@ def synthesize_trio(mutacc_config, samples, dataset_dir=None, mutacc_binary=None
                                          tmp_dir=tmp_dir,
                                          environment=environment,
                                          dry=dry,
-                                         conda=conda)
+                                         conda=conda,
+                                         job_prefix=member)
         sbatch_files[member] = sbatch_file
 
     return sbatch_files
