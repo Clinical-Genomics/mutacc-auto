@@ -21,7 +21,7 @@ AUTHOR = 'Adam Rosenbaum'
 REQUIRES_PYTHON = '>=3.6.0'
 VERSION = '1.0.0'
 
-#Required versions of scout, hk, and mutacc
+#Required versions of mutacc
 SCOUT_VERSION = '4.2.2'
 HOUSEKEEPER_VERSION = '2.2.8'
 MUTACC_VERSION = '1.0.0'
@@ -101,8 +101,8 @@ def check_mutacc():
 #Check if istallation is made on Travis CI
 istravis = os.environ.get('TRAVIS') == 'true'
 if not istravis:
-    if not check_scout(): sys.exit('Dependency problem: scout >= {} is required'.format(SCOUT_VERSION))
-    if not check_housekeeper(): sys.exit('Dependency problem: housekeeper >= {} is required'.format(HOUSEKEEPER_VERSION))
+    #if not check_scout(): sys.exit('Dependency problem: scout >= {} is required'.format(SCOUT_VERSION))
+    #if not check_housekeeper(): sys.exit('Dependency problem: housekeeper >= {} is required'.format(HOUSEKEEPER_VERSION))
     if not check_mutacc(): sys.exit('Dependency problem: mutacc >= {} is required'.format(MUTACC_VERSION))
 ###
 
