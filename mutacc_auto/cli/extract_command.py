@@ -51,6 +51,7 @@ def extract_command(ctx,
     hk_binary = ctx.obj.get('hk_binary')
     mutacc_config = ctx.obj['mutacc_config']
     mutacc_binary = ctx.obj.get('mutacc_binary')
+    mutacc_environment = environment or ctx.obj.get('mutacc_environment')
 
     slurm_options = ctx.obj['slurm_options']
 
@@ -74,7 +75,7 @@ def extract_command(ctx,
                                                case_input['input_file'],
                                                case_input['padding'],
                                                case_input['case_id'],
-                                               environment,
+                                               mutacc_environment,
                                                slurm_options,
                                                conda=conda,
                                                dry=dry,

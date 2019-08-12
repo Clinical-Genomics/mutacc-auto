@@ -59,7 +59,8 @@ def cli(ctx, loglevel, config_file, log_directory, email, time, account, priorit
                'hk_config': config['housekeeper_config'],
                'hk_binary': config.get('housekeeper_binary'),
                'mutacc_config': config['mutacc_config'],
-               'mutacc_binary': config.get('mutacc_binary')}
+               'mutacc_binary': config.get('mutacc_binary'),
+               'mutacc_environment': config.get('mutacc_environment')}
 
     slurm_config = {}
     if config.get('slurm'):

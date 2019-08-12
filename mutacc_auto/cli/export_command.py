@@ -48,6 +48,7 @@ def export_command(ctx, vcf_out, background, dataset_dir, conda, environment, dr
 
     mutacc_config = ctx.obj['mutacc_config']
     mutacc_binary = ctx.obj.get('mutacc_binary')
+    mutacc_environment = ctx.obj.get('mutacc_environment') or environment
 
     slurm_options = ctx.obj['slurm_options']
 
@@ -63,7 +64,7 @@ def export_command(ctx, vcf_out, background, dataset_dir, conda, environment, dr
                                       merged_vcf_path=vcf_out,
                                       slurm_options=slurm_options,
                                       tmp_dir=tmp_dir,
-                                      environment=environment,
+                                      environment=mutacc_environment,
                                       conda=conda,
                                       dry=dry,
                                       dataset_dir=dataset_dir)
