@@ -48,7 +48,7 @@ def export_command(ctx, vcf_out, background, dataset_dir, conda, environment, dr
 
     mutacc_config = ctx.obj['mutacc_config']
     mutacc_binary = ctx.obj.get('mutacc_binary')
-    mutacc_environment = ctx.obj.get('mutacc_environment') or environment
+    mutacc_environment = environment or ctx.obj.get('mutacc_environment')
 
     slurm_options = ctx.obj['slurm_options']
 
