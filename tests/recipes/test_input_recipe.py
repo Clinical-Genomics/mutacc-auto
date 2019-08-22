@@ -1,5 +1,5 @@
 import pytest
-from mutacc_auto.recipes.input_recipe import get_bams, get_cases, write_vcf, write_input, get_analysis_type, get_inputs
+from mutacc_auto.recipes.input_recipe import write_vcf, write_input, get_analysis_type, get_input
 
 from mutacc_auto.commands.command import Command
 
@@ -13,7 +13,7 @@ SCOUT_OUT_FILE = "tests/fixtures/scout_output.json"
 TEST_VCF = "tests/fixtures/test_vcf.vcf"
 TEST_SCOUT_VARIANT = "tests/fixtures/scout_variant_output.json"
 
-def mock_hk_output(case_id):
+def mock_hk_output():
 
     with open(HK_OUT_FILE) as hk_handle:
 
@@ -21,7 +21,7 @@ def mock_hk_output(case_id):
 
     return hk_out
 
-def mock_scout_output(case_id):
+def mock_scout_output():
 
     with open(SCOUT_OUT_FILE) as scout_handle:
 
@@ -29,7 +29,7 @@ def mock_scout_output(case_id):
 
     return scout_out
 
-def mock_scout_variant(case_id):
+def mock_scout_variant():
 
     with open(TEST_SCOUT_VARIANT) as vcf_handle:
 
@@ -37,23 +37,10 @@ def mock_scout_variant(case_id):
 
     return vcf_out
 
-@patch.object(Command, 'check_output', mock_scout_output)
-def test_get_cases():
-    cases = get_cases(case_id='case_id')
 
-    assert len(cases)==1
-    assert cases[0]['display_name'] == '643594'
-
-@patch.object(Command, 'check_output', mock_hk_output)
-def test_get_bams():
-    bams = get_bams('case_id')
-
-    assert len(bams) == 3
-
-@patch.object(Command, 'check_output', mock_scout_variant)
 def test_write_vcf(tmpdir):
     tmp_dir = Path(tmpdir.mkdir('test_write_vcf'))
-    vcf_path = write_vcf('case_id', tmp_dir)
+    vcf_path = write_vcf(tmp_dir, mock_scout_variant(), 'case_id')
 
     assert os.path.isfile(vcf_path)
 
@@ -77,43 +64,23 @@ def test_get_analysis_type(scout_case):
 
     assert analysis_type == 'wgs'
 
-@patch('mutacc_auto.recipes.input_recipe.get_cases')
-@patch('mutacc_auto.recipes.input_recipe.get_bams')
+
 @patch('mutacc_auto.recipes.input_recipe.write_vcf')
-def test_get_inputs(mock_write_vcf, mock_get_bams, mock_get_cases, tmpdir, scout_case):
+def test_get_input(mock_write_vcf, tmpdir, scout_case, scout_variant_output):
 
     tmp_dir = Path(tmpdir.mkdir('test_get_inputs'))
-    mock_get_cases.return_value = [scout_case]*2
-    mock_get_bams.return_value = {
-        'ADM1059A2': '/Path/to/ADM1059A2/bam',
-        'ADM1059A1': '/Path/to/ADM1059A1/bam',
-        'ADM1059A3': '/Path/to/ADM1059A3/bam'
-        }
     mock_write_vcf.return_value = '/path/to/vcf'
 
-    inputs = get_inputs(tmp_dir, days_ago = 1234)
+    input = get_input(tmp_dir, scout_case, scout_variant_output, 100)
 
-    mock_get_cases.assert_called_with(None,1234, scout_config=None, scout_binary=None)
-    mock_get_bams.assert_called_with('643594', hk_config=None, hk_binary=None)
-    mock_write_vcf.assert_called_with('643594', tmp_dir, scout_config=None, scout_binary=None)
+    mock_write_vcf.assert_called_with(tmp_dir, scout_variant_output, scout_case['_id'])
 
-    assert len(inputs) == 2
-
-    for input in inputs:
-        assert input['padding'] == 0
-        assert os.path.isfile(input['input_file'])
+    assert input['padding'] == 0
+    assert os.path.isfile(input['input_file'])
 
     with patch("mutacc_auto.recipes.input_recipe.get_analysis_type", return_value = 'wgs') as mock_analysis:
 
-        inputs = get_inputs(tmp_dir, case_id = 'case_id', padding = 300)
+        input = get_input(tmp_dir, case_id = 'case_id', padding = 300)
 
-        for input in inputs:
-            assert input['padding'] == 300
-            assert os.path.isfile(input['input_file'])
-
-    #Try with non-existing bams
-    mock_get_bams.return_value = {}
-
-    inputs = get_inputs(tmp_dir, days_ago = 1234)
-
-    assert len(inputs) == 0
+        assert input['padding'] == 300
+        assert os.path.isfile(input['input_file'])

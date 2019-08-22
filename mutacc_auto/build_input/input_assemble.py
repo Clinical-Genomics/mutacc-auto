@@ -6,7 +6,7 @@ from pathlib import Path
 import logging
 
 #Fields in a scout case document to be included as meta-data
-SCOUT_CASE_FILDS = (
+SCOUT_CASE_FIELDS = (
     'genome_build',
     'genome_version',
     'dynamic_gene_list',
@@ -25,7 +25,7 @@ LOG = logging.getLogger(__name__)
 class NoBamException(Exception):
     pass
 
-def get_case(case, bam_file_paths, vcf_file_path):
+def get_case(case, vcf_file_path):
 
     case_id = case['_id']
 
@@ -35,7 +35,7 @@ def get_case(case, bam_file_paths, vcf_file_path):
     }
 
     #Iterate over scout fields and add to case_obj.
-    for field in SCOUT_CASE_FILDS:
+    for field in SCOUT_CASE_FIELDS:
 
         if case.get(field):
 
@@ -49,7 +49,7 @@ def get_case(case, bam_file_paths, vcf_file_path):
                 case_obj[field] = case[field]
 
     #Get sample list
-    samples_obj = assemble_samples(case['individuals'], bam_file_paths)
+    samples_obj = assemble_samples(case['individuals'])
 
     return {
 
@@ -59,7 +59,7 @@ def get_case(case, bam_file_paths, vcf_file_path):
     }
 
 
-def assemble_samples(individuals, bam_files = None):
+def assemble_samples(individuals):
 
     """
         Given a list of individuals, this function assembles a samples object
@@ -90,14 +90,10 @@ def assemble_samples(individuals, bam_files = None):
                 'father': individual['father'] if individual['father'] else '0',
                 'mother': individual['mother'] if individual['mother'] else '0',
                 'analysis_type': individual['analysis_type'],
-                'bam_file': bam_files.get(individual['individual_id']) if bam_files else None
+                'bam_file': individual['bam_file']
             }
 
         )
-        #Check if bam_file is found for each sample
-        if not samples[-1]['bam_file']:
-            LOG.critical("No bam file found for sample {}".format(individual['individual_id']))
-            raise NoBamException
 
 
     return samples

@@ -54,11 +54,7 @@ def cli(ctx, loglevel, config_file, log_directory, email, time, account, priorit
             config = yaml.load(yaml_handle, Loader=yaml.FullLoader)
 
 
-    ctx.obj = {'scout_config': config['scout_config'],
-               'scout_binary': config.get('scout_binary'),
-               'hk_config': config['housekeeper_config'],
-               'hk_binary': config.get('housekeeper_binary'),
-               'mutacc_config': config['mutacc_config'],
+    ctx.obj = {'mutacc_config': config['mutacc_config'],
                'mutacc_binary': config.get('mutacc_binary'),
                'mutacc_environment': config.get('mutacc_environment')}
 
