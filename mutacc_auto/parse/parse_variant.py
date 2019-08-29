@@ -82,7 +82,10 @@ def get_columns(variant):
 
     for column in SCOUT_TO_COLUMNS:
 
-        if type(variant[column]) == list:
+        if variant.get(column, None) is None:
+            column_value = '.'
+
+        elif type(variant[column]) == list:
             column_value = ','.join([str(element) for element in variant[column]])
 
         else:

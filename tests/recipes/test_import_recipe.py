@@ -9,4 +9,4 @@ from mutacc_auto.commands.command import Command
 @patch.object(Command, 'call')
 def test_import_extracted_case(command):
 
-    import_extracted_case('case','config')
+    import_extracted_case('case','config', 'binary')

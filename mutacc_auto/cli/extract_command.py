@@ -40,7 +40,6 @@ LOG = logging.getLogger(__name__)
 def extract_command(ctx,
                     case,
                     variants,
-                    days_ago,
                     environment,
                     padding,
                     dry,
@@ -63,7 +62,7 @@ def extract_command(ctx,
         #Prepare input for case with case_id or days since updated
         input = get_input(tmp_dir,
                           case=json.loads(case),
-                          variants=json.loads(variants),
+                          variants=variants,
                           padding=padding)
 
         #Extract reads for every case
@@ -84,12 +83,12 @@ def extract_command(ctx,
 
                 LOG.info("SBATCH SCRIPT {}\n{}".format(sbatch_script, sbatch_handle.read()))
 
-            with open(case_input['input_file']) as input_handle:
+            with open(input['input_file']) as input_handle:
 
-                LOG.info("INPUT FILE {}\n{}".format(case_input['input_file'],input_handle.read()))
+                LOG.info("INPUT FILE {}\n{}".format(input['input_file'],input_handle.read()))
 
 
-            with open(case_input['input_file']) as input_handle:
+            with open(input['input_file']) as input_handle:
                 input_file = yaml.load(input_handle, Loader=yaml.FullLoader)
             vcf_file = input_file['variants']
 

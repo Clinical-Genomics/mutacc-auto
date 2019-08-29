@@ -20,6 +20,7 @@ def import_command(ctx,
 
     import_dir = ctx.obj['import_dir']
     mutacc_config = ctx.obj['mutacc_config']
+    mutacc_binary = ctx.obj['mutacc_binary']
 
     #For each case found in the import_dir stated in the mutacc config file
     #import to database
@@ -31,5 +32,5 @@ def import_command(ctx,
             if str(case_path).endswith('mutacc.json'):
                 LOG.info("importing {}".format(filename))
                 if not dry:
-                    import_extracted_case(str(case_path), mutacc_config)
+                    import_extracted_case(str(case_path), mutacc_config, mutacc_binary)
                     os.remove(case_path)

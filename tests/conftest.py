@@ -4,6 +4,7 @@ import yaml
 
 HK_OUT_FILE = "tests/fixtures/HK_output_test.txt"
 SCOUT_OUT_FILE = "tests/fixtures/scout_output.json"
+SCOUT_VARIANT_OUT_FILE = "tests/fixtures/scout_variant_output.json"
 CASE_YAML = "tests/fixtures/case_input.yaml"
 CONFIG = "tests/fixtures/config_file.yaml"
 BACKGROUND = "tests/fixtures/background.yaml"
@@ -43,6 +44,15 @@ def scout_output():
         case = case_handle.read()
 
     return case
+
+@pytest.fixture
+def scout_variant_output():
+
+    with open(SCOUT_VARIANT_OUT_FILE) as variants_handle:
+
+        variants = variants_handle.read()
+
+    return variants
 
 @pytest.fixture
 def configuration_file():

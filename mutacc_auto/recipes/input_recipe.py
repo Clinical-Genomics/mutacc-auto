@@ -5,6 +5,7 @@ import logging
 
 from mutacc_auto.utils.tmp_dir import TemporaryDirectory
 from mutacc_auto.parse.parse_variant import get_vcf_from_json
+from mutacc_auto.build_input.input_assemble import get_case
 
 PADDING = 600
 

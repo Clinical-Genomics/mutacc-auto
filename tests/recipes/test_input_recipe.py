@@ -75,12 +75,12 @@ def test_get_input(mock_write_vcf, tmpdir, scout_case, scout_variant_output):
 
     mock_write_vcf.assert_called_with(tmp_dir, scout_variant_output, scout_case['_id'])
 
-    assert input['padding'] == 0
+    assert input['padding'] == 100
     assert os.path.isfile(input['input_file'])
 
     with patch("mutacc_auto.recipes.input_recipe.get_analysis_type", return_value = 'wgs') as mock_analysis:
 
-        input = get_input(tmp_dir, case_id = 'case_id', padding = 300)
+        input = get_input(tmp_dir, scout_case, scout_variant_output, padding = 300)
 
         assert input['padding'] == 300
         assert os.path.isfile(input['input_file'])
