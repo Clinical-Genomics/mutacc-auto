@@ -62,12 +62,10 @@ def test_MutaccExport():
 
     command = MutaccExport(config_file='config_file',
                            mutacc_binary='path/to/mutacc',
-                           case_query='{}',
-                           variant_query='{}',
                            proband=True,
                            member='child',
                            sample_name='sample')
 
     assert str(command) == ("path/to/mutacc --config-file config_file db export "
-                            "--variant-query {} --case-query {} --sample-name sample "
-                            "--proband --member child --json-out")
+                            "--sample-name sample "
+                            "--proband --member child --all-variants --json-out")

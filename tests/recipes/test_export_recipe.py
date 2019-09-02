@@ -21,7 +21,6 @@ def test_run_mutacc_export_command(check_output_mock, mutacc_export_output):
 
     mutacc_out = run_mutacc_export_command(mutacc_config='path/to/config',
                                            mutacc_binary='mutacc_binary',
-                                           case_query='{}',
                                            proband=True,
                                            member='child',
                                            sample_name='child')
@@ -35,8 +34,7 @@ def test_export_trio(check_output_mock, mutacc_export_output):
     check_output_mock.return_value = mutacc_export_output
 
     mutacc_files = export_trio(mutacc_config='path/to/config',
-                               mutacc_binary='mutacc_binary',
-                               case_query='{}')
+                               mutacc_binary='mutacc_binary')
     mutacc_export_output_json = json.loads(mutacc_export_output)
     mutacc_files_expected = {'father': mutacc_export_output_json,
                              'child': mutacc_export_output_json,
@@ -127,7 +125,6 @@ def test_export_dataset(mock_os_remove,
     datasets = export_dataset(mutacc_config='path/to/config',
                               background=background_set,
                               mutacc_binary='path/to/binary',
-                              case_query='{}',
                               merged_vcf_path='path/to/merged_vcf')
 
 

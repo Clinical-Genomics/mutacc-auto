@@ -15,8 +15,8 @@ from mutacc_auto.files.sbatch import SbatchScript
 LOG = logging.getLogger(__name__)
 
 
-def run_mutacc_export_command(mutacc_config, mutacc_binary=None, case_query=None,
-                              variant_query=None, proband=False, member='affected',
+def run_mutacc_export_command(mutacc_config, mutacc_binary=None,
+                              proband=False, member='affected',
                               sample_name=None):
 
     """
@@ -25,8 +25,6 @@ def run_mutacc_export_command(mutacc_config, mutacc_binary=None, case_query=None
         Args:
             mutacc_config (Path): Path to mutacc config file
             mutacc_binary (Path): path to mutacc binary
-            case_query (string): json string with query against case collection
-            variant_query (string): json string with query against variant collection
             proband (bool): True if sample is proband, False if not
             member (string): affected|father|mother|child
             sample_name (string): name of created sample
@@ -38,8 +36,6 @@ def run_mutacc_export_command(mutacc_config, mutacc_binary=None, case_query=None
 
     mutacc_export_command = MutaccExport(config_file=mutacc_config,
                                          mutacc_binary=mutacc_binary,
-                                         case_query=case_query,
-                                         variant_query=variant_query,
                                          proband=proband,
                                          member=member,
                                          sample_name=sample_name)
@@ -47,7 +43,7 @@ def run_mutacc_export_command(mutacc_config, mutacc_binary=None, case_query=None
     export_out = json.loads(export_out)
     return export_out
 
-def export_trio(mutacc_config, mutacc_binary=None, case_query=None, variant_query=None):
+def export_trio(mutacc_config, mutacc_binary=None):
 
     """
         Exports trio from mutaccDB
@@ -55,8 +51,6 @@ def export_trio(mutacc_config, mutacc_binary=None, case_query=None, variant_quer
         Args:
             mutacc_config (Path): Path to mutacc config file
             mutacc_binary (Path): path to mutacc binary
-            case_query (string): json string with query against case collection
-            variant_query (string): json string with query against variant collection
 
         Returns:
             mutacc_files (dict): files created by mutacc for each sample
@@ -69,8 +63,6 @@ def export_trio(mutacc_config, mutacc_binary=None, case_query=None, variant_quer
 
         member_files = run_mutacc_export_command(mutacc_config=mutacc_config,
                                                  mutacc_binary=mutacc_binary,
-                                                 case_query=case_query,
-                                                 variant_query=variant_query,
                                                  proband=True if member == 'child' else False,
                                                  member=member,
                                                  sample_name=member)
@@ -207,8 +199,8 @@ def synthesize_trio(mutacc_config, samples, dataset_dir=None, mutacc_binary=None
     return sbatch_files
 
 
-def export_dataset(mutacc_config, background=None, mutacc_binary=None, case_query=None,
-                   variant_query=None, merged_vcf_path=None, slurm_options=None,
+def export_dataset(mutacc_config, background=None, mutacc_binary=None,
+                   merged_vcf_path=None, slurm_options=None,
                    tmp_dir=None, environment=None, conda=False, dry=False, dataset_dir=None):
 
     """
@@ -218,8 +210,6 @@ def export_dataset(mutacc_config, background=None, mutacc_binary=None, case_quer
             mutacc_config (Path): Path to mutacc config file
             mutacc_binary (Path): path to mutacc binary
             background (dict): dictionary with background files to be used for each sample
-            case_query (string): json string with query against case collection
-            variant_query (string): json string with query against variant collection
             merged_vcf_path (Path): path where to create vcf file
 
         Returns:
@@ -228,9 +218,7 @@ def export_dataset(mutacc_config, background=None, mutacc_binary=None, case_quer
     """
 
     files = export_trio(mutacc_config=mutacc_config,
-                        mutacc_binary=mutacc_binary,
-                        case_query=case_query,
-                        variant_query=variant_query)
+                        mutacc_binary=mutacc_binary)
 
     vcf_files = [files[member]['vcf_file'] for member in files.keys()]
     zipped_vcf_files = [bgzip_vcf_file(vcf_file) for vcf_file in vcf_files]
