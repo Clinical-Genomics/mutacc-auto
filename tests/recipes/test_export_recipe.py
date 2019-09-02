@@ -4,14 +4,14 @@ from mock import patch
 import os
 from pathlib import Path
 
-from mutacc_auto.recipes.export_recipe import (run_mutacc_export_command,
-                                               export_trio,
-                                               bgzip_vcf_file,
-                                               index_vcf_file,
-                                               merge_vcf_files,
-                                               synthesize_dataset,
-                                               synthesize_trio,
-                                               export_dataset)
+from mutacc_auto.procedures.export_procedure import (run_mutacc_export_command,
+                                                     export_trio,
+                                                     bgzip_vcf_file,
+                                                     index_vcf_file,
+                                                     merge_vcf_files,
+                                                     synthesize_dataset,
+                                                     synthesize_trio,
+                                                     export_dataset)
 from mutacc_auto.commands.command import Command
 
 @patch.object(Command, 'check_output')
@@ -95,11 +95,11 @@ def test_synthesize_trio(check_output_mock, mutacc_synthesize_input, tmpdir):
     for member in datasets.keys():
         assert os.path.exists(datasets[member])
 
-@patch('mutacc_auto.recipes.export_recipe.export_trio')
-@patch('mutacc_auto.recipes.export_recipe.bgzip_vcf_file')
-@patch('mutacc_auto.recipes.export_recipe.index_vcf_file')
-@patch('mutacc_auto.recipes.export_recipe.merge_vcf_files')
-@patch('mutacc_auto.recipes.export_recipe.synthesize_trio')
+@patch('mutacc_auto.procedures.export_procedure.export_trio')
+@patch('mutacc_auto.procedures.export_procedure.bgzip_vcf_file')
+@patch('mutacc_auto.procedures.export_procedure.index_vcf_file')
+@patch('mutacc_auto.procedures.export_procedure.merge_vcf_files')
+@patch('mutacc_auto.procedures.export_procedure.synthesize_trio')
 @patch('os.remove')
 def test_export_dataset(mock_os_remove,
                         mock_synthesize_trio,

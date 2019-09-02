@@ -3,7 +3,7 @@ from pathlib import Path
 import os
 from mock import patch
 
-from mutacc_auto.recipes.extract_recipe import *
+from mutacc_auto.procedures.extract_procedure import *
 from mutacc_auto.commands.command import Command
 
 def test_write_sbatch_script(tmpdir):
@@ -30,7 +30,7 @@ def test_sbatch_run(command):
     sbatch_run('/sbatch/script/path', dry=True)
     sbatch_run('/sbatch/script/path')
 
-@patch('mutacc_auto.recipes.extract_recipe.sbatch_run')
+@patch('mutacc_auto.procedures.extract_procedure.sbatch_run')
 def test_run_mutacc_extract(mock_sbatch_run, tmpdir):
 
     tmp_dir = Path(tmpdir.mkdir('test_run_mutacc_extract'))

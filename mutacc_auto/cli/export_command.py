@@ -4,7 +4,7 @@ from pathlib import Path
 
 import yaml
 
-from mutacc_auto.recipes.export_recipe import export_dataset
+from mutacc_auto.procedures.export_procedure import export_dataset
 from mutacc_auto.utils.tmp_dir import TemporaryDirectory
 
 LOG = logging.getLogger(__name__)

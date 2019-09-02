@@ -6,7 +6,7 @@ import yaml
 import sys
 import os
 
-from mutacc_auto.recipes.import_recipe import import_extracted_case
+from mutacc_auto.procedures.import_procedure import import_extracted_case
 
 LOG = logging.getLogger(__name__)
 

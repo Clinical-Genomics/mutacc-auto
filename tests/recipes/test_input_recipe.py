@@ -1,5 +1,5 @@
 import pytest
-from mutacc_auto.recipes.input_recipe import write_vcf, write_input, get_analysis_type, get_input
+from mutacc_auto.procedures.input_procedure import write_vcf, write_input, get_analysis_type, get_input
 
 from mutacc_auto.commands.command import Command
 
@@ -65,7 +65,7 @@ def test_get_analysis_type(scout_case):
     assert analysis_type == 'wgs'
 
 
-@patch('mutacc_auto.recipes.input_recipe.write_vcf')
+@patch('mutacc_auto.procedures.input_procedure.write_vcf')
 def test_get_input(mock_write_vcf, tmpdir, scout_case, scout_variant_output):
 
     tmp_dir = Path(tmpdir.mkdir('test_get_inputs'))
@@ -78,7 +78,7 @@ def test_get_input(mock_write_vcf, tmpdir, scout_case, scout_variant_output):
     assert input['padding'] == 100
     assert os.path.isfile(input['input_file'])
 
-    with patch("mutacc_auto.recipes.input_recipe.get_analysis_type", return_value = 'wgs') as mock_analysis:
+    with patch("mutacc_auto.procedures.input_procedure.get_analysis_type", return_value = 'wgs') as mock_analysis:
 
         input = get_input(tmp_dir, scout_case, scout_variant_output, padding = 300)
 

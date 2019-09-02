@@ -9,8 +9,8 @@ from pathlib import Path
 import json
 
 from mutacc_auto.utils.tmp_dir import TemporaryDirectory
-from mutacc_auto.recipes.input_recipe import get_input
-from mutacc_auto.recipes.extract_recipe import run_mutacc_extract
+from mutacc_auto.procedures.input_procedure import get_input
+from mutacc_auto.procedures.extract_procedure import run_mutacc_extract
 
 LOG = logging.getLogger(__name__)
 
