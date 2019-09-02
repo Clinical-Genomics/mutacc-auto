@@ -30,7 +30,7 @@ def import_command(ctx,
 
             ### IMPORT CASE AND DELETE FILE AFTERWARDS
             if str(case_path).endswith('mutacc.json'):
-                LOG.info("importing {}".format(filename))
+                LOG.info("importing {}".format(case_path))
                 if not dry:
                     import_extracted_case(str(case_path), mutacc_config, mutacc_binary)
                     os.remove(case_path)
