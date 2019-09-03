@@ -60,17 +60,17 @@ def extract_command(ctx,
         LOG.info("All files are placed in {}".format(tmp_dir))
 
         #Prepare input for case with case_id or days since updated
-        input = get_input(tmp_dir,
-                          case=json.loads(case),
-                          variants=variants,
-                          padding=padding)
+        mutacc_input = get_input(tmp_dir,
+                                 case=json.loads(case),
+                                 variants=variants,
+                                 padding=padding)
 
         #Extract reads for every case
         sbatch_script = run_mutacc_extract(tmp_dir,
                                            mutacc_config,
-                                           input['input_file'],
-                                           input['padding'],
-                                           input['case_id'],
+                                           mutacc_input['input_file'],
+                                           mutacc_input['padding'],
+                                           mutacc_input['case_id'],
                                            mutacc_environment,
                                            slurm_options,
                                            conda=conda,
@@ -83,12 +83,12 @@ def extract_command(ctx,
 
                 LOG.info("SBATCH SCRIPT {}\n{}".format(sbatch_script, sbatch_handle.read()))
 
-            with open(input['input_file']) as input_handle:
+            with open(mutacc_input['input_file']) as input_handle:
 
-                LOG.info("INPUT FILE {}\n{}".format(input['input_file'],input_handle.read()))
+                LOG.info("INPUT FILE {}\n{}".format(mutacc_input['input_file'], input_handle.read()))
 
 
-            with open(input['input_file']) as input_handle:
+            with open(mutacc_input['input_file']) as input_handle:
                 input_file = yaml.load(input_handle, Loader=yaml.FullLoader)
             vcf_file = input_file['variants']
 
