@@ -4,7 +4,7 @@ from pathlib import Path
 
 import yaml
 
-from mutacc_auto.recipes.export_recipe import export_dataset
+from mutacc_auto.procedures.export_procedure import export_dataset
 from mutacc_auto.utils.tmp_dir import TemporaryDirectory
 
 LOG = logging.getLogger(__name__)
@@ -60,7 +60,6 @@ def export_command(ctx, vcf_out, background, dataset_dir, conda, environment, dr
         sbatch_files = export_dataset(mutacc_config=mutacc_config,
                                       background=background_datasets,
                                       mutacc_binary=mutacc_binary,
-                                      case_query='{}',
                                       merged_vcf_path=vcf_out,
                                       slurm_options=slurm_options,
                                       tmp_dir=tmp_dir,

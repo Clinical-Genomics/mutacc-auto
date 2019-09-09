@@ -40,7 +40,7 @@ class MutaccImport(MutaccCommand):
 
 class MutaccExport(MutaccCommand):
 
-    def __init__(self, config_file, mutacc_binary=None, case_query=None, variant_query=None,
+    def __init__(self, config_file, mutacc_binary=None,
                  proband=False, member='affected', sample_name=None):
 
         super(MutaccExport, self).__init__(config_file, mutacc_binary=mutacc_binary)
@@ -48,16 +48,13 @@ class MutaccExport(MutaccCommand):
         self.add_subcommand('db')
         self.add_subcommand('export')
 
-        if variant_query is not None:
-            self.add_option('variant-query', variant_query)
-        if case_query is not None:
-            self.add_option('case-query', case_query)
         if sample_name is not None:
             self.add_option('sample-name', sample_name)
         if proband:
             self.add_option('proband')
 
         self.add_option('member', member)
+        self.add_option('all-variants')
         self.add_option('json-out')
 
 class MutaccSynthesize(MutaccCommand):

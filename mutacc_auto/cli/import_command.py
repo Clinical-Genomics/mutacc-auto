@@ -6,7 +6,7 @@ import yaml
 import sys
 import os
 
-from mutacc_auto.recipes.import_recipe import import_extracted_case
+from mutacc_auto.procedures.import_procedure import import_extracted_case
 
 LOG = logging.getLogger(__name__)
 
@@ -20,6 +20,7 @@ def import_command(ctx,
 
     import_dir = ctx.obj['import_dir']
     mutacc_config = ctx.obj['mutacc_config']
+    mutacc_binary = ctx.obj['mutacc_binary']
 
     #For each case found in the import_dir stated in the mutacc config file
     #import to database
@@ -29,7 +30,7 @@ def import_command(ctx,
 
             ### IMPORT CASE AND DELETE FILE AFTERWARDS
             if str(case_path).endswith('mutacc.json'):
-                LOG.info("importing {}".format(filename))
+                LOG.info("importing {}".format(case_path))
                 if not dry:
-                    import_extracted_case(str(case_path), mutacc_config)
+                    import_extracted_case(str(case_path), mutacc_config, mutacc_binary)
                     os.remove(case_path)

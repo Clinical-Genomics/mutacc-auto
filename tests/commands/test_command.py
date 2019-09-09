@@ -4,8 +4,6 @@ from mock import patch
 
 from mutacc_auto.commands.command import Command
 from mutacc_auto.commands.sbatch_command import SbatchCommand
-from mutacc_auto.commands.scout_command import (ScoutExportCases, ScoutExportCausativeVariants)
-from mutacc_auto.commands.housekeeper_command import HousekeeperCommand
 from mutacc_auto.commands.mutacc_command import (MutaccExtract, MutaccImport, MutaccExport, MutaccSynthesize)
 
 def test_Command():
@@ -39,39 +37,6 @@ def test_SbatchCommand():
 
     assert str(command) == "sbatch script"
 
-def test_ScoutExportCases():
-
-    command = ScoutExportCases()
-
-    assert str(command) == "scout export cases --json --finished"
-
-    command = ScoutExportCases(config_file='config_file')
-
-    assert str(command) == "scout --config config_file export cases --json --finished"
-
-    command = ScoutExportCases(config_file='config_file', scout_binary='/path/to/scout')
-
-    assert str(command) == "/path/to/scout --config config_file export cases --json --finished"
-
-def test_ScoutExportCausativeVariants():
-
-    command = ScoutExportCausativeVariants(case_id='case_id',config_file='config_file')
-
-    assert str(command) == "scout --config config_file export variants --json --case-id case_id"
-
-    command = ScoutExportCausativeVariants(case_id='case_id',config_file='config_file', scout_binary='/path/to/scout')
-
-    assert str(command) == "/path/to/scout --config config_file export variants --json --case-id case_id"
-
-def test_HousekeeperCommand():
-
-    command = HousekeeperCommand(case_id='case_id', config_file='config_file')
-
-    assert str(command) == "housekeeper --config config_file get -V case_id"
-
-    command = HousekeeperCommand(case_id='case_id', config_file='config_file', hk_binary='/path/to/housekeeper')
-
-    assert str(command) == "/path/to/housekeeper --config config_file get -V case_id"
 
 def test_MutaccExtract():
 
@@ -97,12 +62,10 @@ def test_MutaccExport():
 
     command = MutaccExport(config_file='config_file',
                            mutacc_binary='path/to/mutacc',
-                           case_query='{}',
-                           variant_query='{}',
                            proband=True,
                            member='child',
                            sample_name='sample')
 
     assert str(command) == ("path/to/mutacc --config-file config_file db export "
-                            "--variant-query {} --case-query {} --sample-name sample "
-                            "--proband --member child --json-out")
+                            "--sample-name sample "
+                            "--proband --member child --all-variants --json-out")
