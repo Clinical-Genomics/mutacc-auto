@@ -6,11 +6,10 @@ mutacc-auto work as a wrapper for [MutAcc](https://github.com/Clinical-Genomics/
 the process of uploading new cases to the MutAcc database, export, and upgrade validation sets. mutacc-auto
 takes use of other CLI apps in the Clinical-Genomics suite, [hosekeeper](https://github.com/Clinical-Genomics/housekeeper),
 and [scout](https://github.com/Clinical-Genomics/scout), to assemble all relevant files, and meta-data about a case as
-input to MutAcc.  
+input to MutAcc. ```mutacc-auto``` is designed to be run from [cg](https://github.com/Clinical-Genomics/cg).  
 
 ## Dependencies
 
-mutacc-auto depends on housekeeper >= 2.2 and scout >= 4.2. These tools must be installed first. mutacc-auto also uses the slurm workload manager to submit jobs.  
 
 ## Install
 
@@ -31,18 +30,13 @@ To extract the clinically relevant reads from a case use
 
 ```console
 mutacc-auto --config-file <config_file> extract \
---case-id <case_id> \
---environment <conda_env> \
+--case <case_json> \
+--variants <variants_json> \
 ```
 
 To search for recently finished cases in scout, and extract reads from the cases
 finished since the past few days, the --days-ago option can be used
 
-```console
-mutacc-auto --config-file <config_file> extract \
---days-ago 7 \
---environment <conda_env> \
-```
 This would find all cases finished the past week and extract the reads from those
 
 full list of options
@@ -51,8 +45,10 @@ full list of options
 Usage: mutacc-auto extract [OPTIONS]
 
 Options:
-  -c, --case-id TEXT      case id used in scout and housekeeper
-  -d, --days-ago INTEGER  days since last update of case
+  -c, --case TEXT         JSON formated string containing case data (passed to
+                          mutacc-auto via cg)
+  -v, --variants TEXT     JSON formated string containing variant data (passed
+                          to mutacc-auto via cg)
   -e, --environment TEXT  conda environment used for mutacc
   -p, --padding INTEGER   padding for genomic regions. this defaults to 0 for
                           WES cases
@@ -73,10 +69,6 @@ added to a yaml formated file, as the example below:
 
 ```yaml
 #Configuration and binary paths placed here
-scout_config: /path/to/scout/config
-scout_binary: /path/to/scout/binary
-housekeeper_config: /path/to/housekeeper/config
-housekeeper_binary: /path/to/housekeeper/binary
 mutacc_config: /path/to/mutacc/config
 mutacc_binary: /path/to/mutacc/binary
 

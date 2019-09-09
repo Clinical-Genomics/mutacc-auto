@@ -22,8 +22,6 @@ REQUIRES_PYTHON = '>=3.6.0'
 VERSION = '1.0.0'
 
 #Required versions of mutacc
-SCOUT_VERSION = '4.2.2'
-HOUSEKEEPER_VERSION = '2.2.8'
 MUTACC_VERSION = '1.0.0'
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -51,38 +49,6 @@ def parse_reqs(req_path='./requirements.txt'):
 # What packages are required for this module to be executed?
 REQUIRED = parse_reqs()
 
-### Check if Scout and HouseKeeper are installed
-
-def check_scout():
-
-    try:
-        scout_output = subprocess.check_output(['scout', '--version']).decode('utf-8')
-
-    except OSError as error:
-        sys.exit('scout does not exist')
-
-    scout_version = int(scout_output.split(' ')[-1].replace('.', ''))
-    min_scout_version = int(SCOUT_VERSION.replace('.',''))
-
-    if scout_version >= min_scout_version:
-
-        return True
-
-def check_housekeeper():
-
-    try:
-        hk_output = subprocess.check_output(['housekeeper', '--version']).decode('utf-8')
-
-    except OSError as error:
-        sys.exit('housekeeper does not exist')
-
-    hk_version = int(hk_output.split(' ')[-1].replace('.', ''))
-    min_hk_version = int(HOUSEKEEPER_VERSION.replace('.',''))
-
-    if hk_version >= min_hk_version:
-
-        return True
-
 def check_mutacc():
 
     try:
@@ -101,10 +67,7 @@ def check_mutacc():
 #Check if istallation is made on Travis CI
 istravis = os.environ.get('TRAVIS') == 'true'
 if not istravis:
-    #if not check_scout(): sys.exit('Dependency problem: scout >= {} is required'.format(SCOUT_VERSION))
-    #if not check_housekeeper(): sys.exit('Dependency problem: housekeeper >= {} is required'.format(HOUSEKEEPER_VERSION))
     if not check_mutacc(): sys.exit('Dependency problem: mutacc >= {} is required'.format(MUTACC_VERSION))
-###
 
 # The rest you shouldn't have to touch too much :)
 # ------------------------------------------------
