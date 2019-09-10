@@ -36,6 +36,7 @@ class MutaccImport(MutaccCommand):
 
         self.add_subcommand('db')
         self.add_subcommand('import')
+        self.add_option('replace')
         self.add_argument(str(extracted_case_file))
 
 class MutaccExport(MutaccCommand):

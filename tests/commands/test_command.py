@@ -52,11 +52,11 @@ def test_MutaccImport():
 
     command = MutaccImport('config_file', 'case', mutacc_binary='/path/to/mutacc')
 
-    assert str(command) == "/path/to/mutacc --config-file config_file db import case"
+    assert str(command) == "/path/to/mutacc --config-file config_file db import --replace case"
 
     command = MutaccImport('config_file', 'case')
 
-    assert str(command) == "mutacc --config-file config_file db import case"
+    assert str(command) == "mutacc --config-file config_file db import --replace case"
 
 def test_MutaccExport():
 
