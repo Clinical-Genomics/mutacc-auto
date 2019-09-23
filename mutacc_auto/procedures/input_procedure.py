@@ -56,7 +56,7 @@ def get_analysis_type(case):
     """
 
     analysis_type = 'wgs'
-    for sample in case['individuals']:
+    for sample in case['samples']:
 
         if sample['analysis_type'].lower() == 'wes':
 
@@ -83,7 +83,7 @@ def get_input(tmp_dir ,case, variants, padding = None):
 
     input_dict = {}
 
-    case_id = case['_id']
+    case_id = case['case_id']
     input_dict['case_id'] = case_id
     vcf_path = write_vcf(tmp_dir, variants, case_id)
     case_dict = get_case(case, vcf_path)

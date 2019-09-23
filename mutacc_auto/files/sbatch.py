@@ -72,7 +72,8 @@ class SbatchScript():
         #If email is given, include this in header
         if slurm_options.get('email'):
             header += f"{HEADER_PREFIX} --mail-user={slurm_options['email']}{NEWLINE}"
-
+            header += f"{HEADER_PREFIX} --mail-type=FAIL{NEWLINE}"
+            header += f"{HEADER_PREFIX} --mail-type=END{NEWLINE}"
         return header
 
     @staticmethod

@@ -64,7 +64,7 @@ def cli(ctx, loglevel, config_file, log_directory, email, time, account, priorit
 
     slurm_options = {}
     slurm_options['log_directory'] = log_directory or slurm_config['log_directory']
-    slurm_options['email'] = email or slurm_config['email']
+    slurm_options['email'] = email or slurm_config.get('email')
     slurm_options['time'] = time or slurm_config['time']
     slurm_options['account'] = account or slurm_config['account']
     slurm_options['priority'] = priority or slurm_config['priority']

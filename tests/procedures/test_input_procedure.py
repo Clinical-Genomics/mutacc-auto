@@ -56,9 +56,9 @@ def test_get_analysis_type(scout_case):
 
     assert analysis_type == 'wes'
 
-    for i in range(len(scout_case['individuals'])):
+    for i in range(len(scout_case['samples'])):
 
-        scout_case['individuals'][i]['analysis_type'] = 'wgs'
+        scout_case['samples'][i]['analysis_type'] = 'wgs'
 
     analysis_type = get_analysis_type(scout_case)
 
@@ -73,7 +73,7 @@ def test_get_input(mock_write_vcf, tmpdir, scout_case, scout_variant_output):
 
     input = get_input(tmp_dir, scout_case, scout_variant_output, 100)
 
-    mock_write_vcf.assert_called_with(tmp_dir, scout_variant_output, scout_case['_id'])
+    mock_write_vcf.assert_called_with(tmp_dir, scout_variant_output, scout_case['case_id'])
 
     assert input['padding'] == 100
     assert os.path.isfile(input['input_file'])

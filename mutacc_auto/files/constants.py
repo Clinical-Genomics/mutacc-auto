@@ -23,9 +23,7 @@ HEADER_OPTIONS = {
     'nodes': ('n', NODES),
     'time': ('t', TIME),
     'jobname': ('J', JOBNAME),
-    'priority': ('qos', PRIORITY),
-    'mail_fail': ('mail-type', MAIL_FAIL),
-    'mail_end': ('mail-type', MAIL_END)
+    'priority': ('qos', PRIORITY)
 }
 
 SOURCE_ACTIVATE = "source activate"

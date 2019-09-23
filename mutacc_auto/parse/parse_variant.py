@@ -1,17 +1,13 @@
-
 import json
 
-from mutacc_auto.parse.vcf_constants import (SCOUT_TO_FORMAT,
-                                             SCOUT_TO_INFO,
+from mutacc_auto.parse.vcf_constants import (FORMAT_IDS,
+                                             INFO_IDS,
                                              HEADER,
                                              NEWLINE,
                                              TAB,
+                                             HEADER_PREFIX,
                                              COLUMN_NAMES,
-                                             SCOUT_TO_COLUMNS,
-                                             SCOUT_GENE,
-                                             GENE_INFO,
-                                             ANNOTATION)
-
+                                             GENE_INFO)
 
 
 def get_vcf_from_json(scout_vcf_output):
@@ -25,44 +21,31 @@ def get_vcf_from_json(scout_vcf_output):
         Returns:
             vcf_string (str): string with vcf content
     """
-
     scout_vcf_output = json.loads(scout_vcf_output)
-
     vcf_string = ""
-
     #Write header of vcf
     for header_line in HEADER:
         vcf_string += header_line + NEWLINE
-
     #Get samples
-    samples = [sample['sample_id'] for sample in scout_vcf_output[0]['samples']]
-
+    samples = [sample['sample_id'] for sample in scout_vcf_output[0]['FORMAT']]
     #Append sample names to the COLUMN_NAMES list
     column_names = COLUMN_NAMES + samples
-    column_names = TAB.join(column_names)
-
+    column_names = HEADER_PREFIX + TAB.join(column_names)
     vcf_string += column_names + NEWLINE
-
     #Write variants
     for variant in scout_vcf_output:
-
         #Write column values
         record = get_columns(variant)
-
         #write INFO
         info = get_info(variant)
         record.append(info)
-
         #Write the format a
-        vcf_format = ':'.join([SCOUT_TO_FORMAT[ID] for ID in SCOUT_TO_FORMAT.keys()])
+        vcf_format = ':'.join([ID for ID in FORMAT_IDS])
         record.append(vcf_format)
-
         #write genotypes for each sample
         samples = get_genotypes(variant)
         record.append(samples)
-
         record = TAB.join(record) + NEWLINE
-
         #Add variant record to vcf_string
         vcf_string += record
 
@@ -79,20 +62,12 @@ def get_columns(variant):
             record (str): values CHR-FILTER as a string
     """
     record = []
-
-    for column in SCOUT_TO_COLUMNS:
-
+    for column in COLUMN_NAMES[0:7]:
         if variant.get(column, None) is None:
             column_value = '.'
-
-        elif type(variant[column]) == list:
-            column_value = ','.join([str(element) for element in variant[column]])
-
         else:
             column_value = str(variant[column])
-
         record.append(column_value)
-
     return record
 
 def get_info(variant):
@@ -106,34 +81,16 @@ def get_info(variant):
             info (str): INFO string
     """
     info = []
-    for ID in SCOUT_TO_INFO.keys():
-
-        info_string = f"{SCOUT_TO_INFO[ID]}={int(variant[ID])}"
+    for ID in INFO_IDS:
+        info_string = f"{ID}={variant[ID]}"
         info.append(info_string)
-
     if variant['category'].lower() == 'snv':
         info_string = f"TYPE={variant['sub_category']}"
-
     else:
         info_string = f"SVTYPE={variant['sub_category']}"
-
     info.append(info_string)
-
-    #Get annotations
-    genes = variant[SCOUT_GENE]
-    ann_info = []
-
-    for gene in genes:
-        gene_info = '|'.join([gene[ann_id] if gene.get(ann_id) else '' for ann_id in GENE_INFO])
-        ann_info.append(gene_info)
-    ann_info = f"{ANNOTATION}=" + ','.join(ann_info)
-
-    info.append(ann_info)
-
     # Join info string
-
     info = ';'.join(info)
-
     return info
 
 def get_genotypes(variant):
@@ -147,23 +104,12 @@ def get_genotypes(variant):
             samples (str): genotypes for each sample
     """
     samples = []
-    for sample in variant['samples']:
-
+    for sample in variant['FORMAT']:
         gt_calls = []
-        for ID in SCOUT_TO_FORMAT.keys():
-
-            if type(sample[ID]) == list:
-
-                ID_value = ','.join([str(element) for element in sample[ID]])
-
-            else:
-                ID_value = str(sample[ID])
-
+        for ID in FORMAT_IDS:
+            ID_value = str(sample[ID])
             gt_calls.append(ID_value)
-
         gt_calls = ':'.join(gt_calls)
         samples.append(gt_calls)
-
     samples = TAB.join(samples)
-
     return samples
