@@ -2,11 +2,9 @@
 [![Build Status](https://travis-ci.org/Clinical-Genomics/mutacc-auto.png)](https://travis-ci.org/Clinical-Genomics/mutacc-auto)
 [![Coverage Status](https://coveralls.io/repos/github/Clinical-Genomics/mutacc-auto/badge.svg?branch=master)](https://coveralls.io/github/Clinical-Genomics/mutacc-auto?branch=master)
 
-mutacc-auto work as a wrapper for [MutAcc](https://github.com/Clinical-Genomics/mutacc), to automate
-the process of uploading new cases to the MutAcc database, export, and upgrade validation sets. mutacc-auto
-takes use of other CLI apps in the Clinical-Genomics suite, [hosekeeper](https://github.com/Clinical-Genomics/housekeeper),
-and [scout](https://github.com/Clinical-Genomics/scout), to assemble all relevant files, and meta-data about a case as
-input to MutAcc. ```mutacc-auto``` is designed to be run from [cg](https://github.com/Clinical-Genomics/cg).  
+mutacc-auto work as a wrapper for [mutacc](https://github.com/Clinical-Genomics/mutacc), to automate
+the process of uploading new cases to the MutAcc database, export, and make validation sets. mutacc-
+
 
 ## Dependencies
 
@@ -16,9 +14,7 @@ input to MutAcc. ```mutacc-auto``` is designed to be run from [cg](https://githu
 mutacc-auto can be installed using pip,
 
 ```console
-git clone https://github.com/Clinical-Genomics/mutacc-auto.git
-cd mutacc-auto
-pip install -e .
+pip install git+https://github.com/Clinical-Genomics/mutacc-auto
 ```
 ## Usage
 
@@ -33,11 +29,6 @@ mutacc-auto --config-file <config_file> extract \
 --case <case_json> \
 --variants <variants_json> \
 ```
-
-To search for recently finished cases in scout, and extract reads from the cases
-finished since the past few days, the --days-ago option can be used
-
-This would find all cases finished the past week and extract the reads from those
 
 full list of options
 
@@ -60,9 +51,8 @@ Options:
 ```
 
 The configuration file, passed with option --config-file allows the user to predefine
-some important parameters. Here the user can specify the path to the binaries for
-mutacc, scout, and housekeeper, as well as passing the configuration files for the
-respective tools.
+some important parameters. Here the user can specify the path to the binary for
+mutacc and its config.
 
 The user should also add slurm specific parameters to the configuration file. This is
 added to a yaml formated file, as the example below:
