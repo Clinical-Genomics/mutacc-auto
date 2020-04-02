@@ -82,10 +82,14 @@ def get_info(variant):
     """
     info = []
     for ID in INFO_IDS:
+        if variant.get(ID) is None:
+            continue
         info_string = f"{ID}={variant[ID]}"
         info.append(info_string)
     if variant['category'].lower() == 'snv':
         info_string = f"TYPE={variant['sub_category']}"
+    elif variant['category'].lower() == 'str':
+        info_string = f"SVTYPE={variant['category']}"
     else:
         info_string = f"SVTYPE={variant['sub_category']}"
     info.append(info_string)
