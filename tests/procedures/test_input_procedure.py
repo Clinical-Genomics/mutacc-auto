@@ -3,7 +3,7 @@ from mutacc_auto.procedures.input_procedure import write_vcf, write_input, get_a
 
 from mutacc_auto.commands.command import Command
 
-from mock import patch, Mock
+from unittest.mock import patch, Mock
 import unittest
 from pathlib import Path
 import os

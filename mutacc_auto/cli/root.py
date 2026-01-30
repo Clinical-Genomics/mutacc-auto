@@ -56,7 +56,8 @@ def cli(ctx, loglevel, config_file, log_directory, email, time, account, priorit
 
     ctx.obj = {'mutacc_config': config['mutacc_config'],
                'mutacc_binary': config.get('mutacc_binary'),
-               'mutacc_environment': config.get('mutacc_environment')}
+               'mutacc_environment': config.get('mutacc_environment'),
+               'conda_init_path': config.get('conda_init_path')}
 
     slurm_config = {}
     if config.get('slurm'):

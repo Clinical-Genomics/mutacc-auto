@@ -11,7 +11,8 @@ def write_sbatch_script(tmp_dir,
                         mutacc_extract_command,
                         slurm_options,
                         case_id,
-                        conda=False):
+                        conda=False,
+                        conda_init_path=None):
 
     """
         Function to write the sbatch script
@@ -23,6 +24,7 @@ def write_sbatch_script(tmp_dir,
             log_directory (path): path to directory for log files
             email (str): email to notify if job failes/completes
             conda (bool): if True, activates environment with 'conda activate'
+            conda_init_path (path): path to conda profile.d script (e.g. conda.sh)
 
         Returns:
             sbatch_bath: path to sbatch script
@@ -33,7 +35,8 @@ def write_sbatch_script(tmp_dir,
             environment,
             slurm_options,
             case_id,
-            conda=conda
+            conda=conda,
+            conda_init_path=conda_init_path
         ) as sbatch_handle:
 
         sbatch_handle.write_section(mutacc_extract_command)
@@ -88,7 +91,8 @@ def run_mutacc_extract(tmp_dir,
                        conda=False,
                        wait=False,
                        dry=False,
-                       mutacc_binary=None):
+                       mutacc_binary=None,
+                       conda_init_path=None):
 
     """
         Function to extract reads from case
@@ -103,7 +107,8 @@ def run_mutacc_extract(tmp_dir,
                                              mutacc_extract_command,
                                              slurm_options,
                                              case_id,
-                                             conda)
+                                             conda,
+                                             conda_init_path=conda_init_path)
 
 
 

@@ -77,17 +77,21 @@ class SbatchScript():
         return header
 
     @staticmethod
-    def get_environment(environment, conda):
+    def get_environment(environment, conda, conda_init_path=None):
 
         """
             get command to run the correct environment
         """
+        env_commands = ""
         if conda:
+            if conda_init_path:
+                env_commands += f"source {conda_init_path}{NEWLINE}"
             activate_command = CONDA_ACTIVATE
         else:
             activate_command = SOURCE_ACTIVATE
 
-        return f"{activate_command} {environment}{NEWLINE}"
+        env_commands += f"{activate_command} {environment}{NEWLINE}"
+        return env_commands
 
     @staticmethod
     def get_shebang():
@@ -99,7 +103,8 @@ class SbatchScript():
         return SHEBANG
 
 
-    def __init__(self, job_directory, environment, slurm_options, job_prefix="", conda=False):
+    def __init__(self, job_directory, environment, slurm_options, job_prefix="", conda=False,
+                 conda_init_path=None):
 
         """
             Args:
@@ -107,6 +112,7 @@ class SbatchScript():
                 environment (str): environment to be used
                 log_directory (path): path to dir for log files
                 email (str): email to notify
+                conda_init_path (path): path to conda profile.d script (e.g. conda.sh)
         """
 
         self.script_handle = tempfile.NamedTemporaryFile(suffix='.sh',
@@ -116,7 +122,7 @@ class SbatchScript():
                                                          delete=False)
         self.shebang = self.get_shebang()
         self.header = self.get_header(slurm_options, job_prefix)
-        self.environment = self.get_environment(environment, conda)
+        self.environment = self.get_environment(environment, conda, conda_init_path)
 
         #Write sections in script
         self.write_section(self.shebang)
