@@ -1,5 +1,5 @@
 import pytest
-from mock import patch
+from unittest.mock import patch
 
 
 from mutacc_auto.commands.command import Command
